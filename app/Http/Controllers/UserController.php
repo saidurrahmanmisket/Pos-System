@@ -15,6 +15,15 @@ class UserController extends Controller
     public function userRegistration(Request $request)
     {
         try {
+            // checking already exist 
+            $email = $request->input('email');
+            $find = User::where('email', '=', $email)->count();
+            if($find >= 1){
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'email already exist'
+                ]);
+            }
             Users::create([
                 'firstName' => $request->input('firstName'),
                 'lastName' => $request->input('lastName'),
@@ -30,7 +39,9 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'User Registration unsuccessful'
+                'message' => $e->getMessage()
+
+                // 'message' => 'User Registration unsuccessful'
             ]);
         }
     }
@@ -45,9 +56,8 @@ class UserController extends Controller
                 $token  = JWTToken::createToken($request->input('email'));
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'User Login successfully',
-                    'token' => $token
-                ]);
+                    'message' => 'User Login successfully'
+                ])->cookie('token' , $token);
             } else {
                 return response()->json([
                     'status' => 'failed',
@@ -99,9 +109,8 @@ class UserController extends Controller
             $token  = JWTToken::createTokenForSetPassword($request->input('email'));
             return response()->json([
                 'status' => 'success',
-                'message' => 'User Login successfully',
-                'token' => $token
-            ]);
+                'message' => 'User Login successfully'
+            ])->cookie('token', $token);
         } else {
             return response()->json([
                 'status' => 'failed',
@@ -113,7 +122,7 @@ class UserController extends Controller
     function restPassword(Request $request)
     {
         try {
-            $email = $request->header('email');
+            $email = $request->cookie('email');
             $password = $request->input('password');
             User::where('email', '=', $email)->update(['password' => $password]);
 
@@ -128,4 +137,35 @@ class UserController extends Controller
             ]);
         }
     }
+
+
+    function ProfilePage()
+    {
+        return view('pages.dashboard.profile-page');
+    }
+
+    function LoginPage()
+    {
+        return view('pages.auth.login-page');
+    }
+
+    function RegistrationPage()
+    {
+        return view('pages.auth.registration-page');
+    }
+    function SendOtpPage()
+    {
+        return view('pages.auth.send-otp-page');
+    }
+    function VerifyOTPPage()
+    {
+        return view('pages.auth.verify-otp-page');
+    }
+
+    function ResetPasswordPage()
+    {
+        return view('pages.auth.reset-pass-page');
+    }
+
+
 }
