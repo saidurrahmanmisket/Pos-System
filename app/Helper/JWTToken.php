@@ -27,7 +27,7 @@ class JWTToken
         $payload = [
             'iss' => 'laravel-token',
             'iat' => time(),
-            'exp' => time() + 60 * 10,
+            'exp' => time() + 60 *5,
             'userEmail' => $userEmail
         ];
         return JWT::encode($payload, $key, 'HS256');

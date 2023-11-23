@@ -66,15 +66,18 @@
                 url: '/rest-password',
                 type: 'POST',
                 data: {
-                    password:password,
-                    cpassword: cpassword
+                    password:password
                 },
                 success: function(res) {
                     if (res.status == 'success') {
-                        console.log(res);
                         successToast(res.message);
                         setTimeout(function() {
                             window.location.href = "/userLogin";
+                        }, 1000)
+                    }else if(res.status == 'expired'){
+                        errorToast(res.message);
+                        setTimeout(function() {
+                            window.location.href = "/sendOtp";
                         }, 1000)
                     } else {
                         errorToast(res.message);

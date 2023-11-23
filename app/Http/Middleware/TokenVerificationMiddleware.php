@@ -25,8 +25,7 @@ class TokenVerificationMiddleware
         if ($result == 'unauthorize') {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'unauthorize',
-                'token' => $token
+                'message' => 'unauthorize'
             ], status: 401);
         } else {
             $request->headers->set('email', $result);

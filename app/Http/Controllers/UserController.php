@@ -18,7 +18,7 @@ class UserController extends Controller
             // checking already exist 
             $email = $request->input('email');
             $find = User::where('email', '=', $email)->count();
-            if($find >= 1){
+            if ($find >= 1) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'email already exist'
@@ -57,7 +57,7 @@ class UserController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'User Login successfully'
-                ])->cookie('token' , $token);
+                ])->cookie('token', $token);
             } else {
                 return response()->json([
                     'status' => 'failed',
@@ -103,10 +103,10 @@ class UserController extends Controller
         $count = User::where('email', '=', $email)->where('otp', '=', $otp)->count();
 
         if ($count == 1) {
-            //update otp
-            User::where('email', '=', $email)->update(['otp' => '0']);
             //pass rest token issue
             $token  = JWTToken::createTokenForSetPassword($request->input('email'));
+            //update otp
+            User::where('email', '=', $email)->update(['otp' => '0']);
             return response()->json([
                 'status' => 'success',
                 'message' => 'User Login successfully'
@@ -122,13 +122,20 @@ class UserController extends Controller
     function restPassword(Request $request)
     {
         try {
-            $email = $request->cookie('email');
+            $email = $request->header('email');
+            if ($email == "Expired token") {
+                return response()->json([
+                'status' => 'expired',
+                    'message' => "5min end, try again "
+                ]);
+            }
+            
             $password = $request->input('password');
             User::where('email', '=', $email)->update(['password' => $password]);
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Password Reset successfully'
+                'message' => "Password change successful"
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -166,6 +173,4 @@ class UserController extends Controller
     {
         return view('pages.auth.reset-pass-page');
     }
-
-
 }
