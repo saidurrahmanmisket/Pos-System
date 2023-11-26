@@ -47,7 +47,7 @@
         let res=await axios.get("/user-profile")
         hideLoader();
         if(res.status===200 && res.data['status']==='success'){
-            let data=res.data['data'];
+            let data=res.data['user'];
             document.getElementById('email').value=data['email'];
             document.getElementById('firstName').value=data['firstName'];
             document.getElementById('lastName').value=data['lastName'];

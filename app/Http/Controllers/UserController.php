@@ -50,18 +50,18 @@ class UserController extends Controller
         try {
 
             $count = User::where('email', '=', $request->input('email'))
-                ->where('password', '=', $request->input('password'))->count();
+                ->where('password', '=', $request->input('password'))->select('id')->first();
 
-            if ($count == 1) {
-                $token  = JWTToken::createToken($request->input('email'));
+            if ($count != null) {
+                $token  = JWTToken::createToken($request->input('email'), $count->id);
                 return response()->json([
                     'status' => 'success',
                     'message' => 'User Login successfully'
-                ])->cookie('token', $token);
+                ])->cookie('token', $token, 60*24*30);
             } else {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'User unauthorize'
+                    'message' => 'unauthorize'
                 ]);
             }
         } catch (Exception $e) {
@@ -70,6 +70,10 @@ class UserController extends Controller
                 'message' => 'User login failed'
             ]);
         }
+    }
+    public function userLogOut(Request $request)
+    {
+        return redirect('/userLogin')->cookie('token','', -1);
     }
 
     function userSentOTP(Request $request)
@@ -144,7 +148,19 @@ class UserController extends Controller
             ]);
         }
     }
+    function userProfile(Request $request) {
+        $email = $request->header('email');
+        $user = User::where('email','=', $email)->first();
+    
+        return response()->json([
+            'status' => 'success',
+            'message' => "Request successful",
+            'user' => $user
+        ]);
+    }
 
+
+    // page index ////
 
     function ProfilePage()
     {
