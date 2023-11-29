@@ -4,28 +4,30 @@
             <div class="card animated fadeIn w-100 p-3">
                 <div class="card-body">
                     <h4>User Profile</h4>
-                    <hr/>
+                    <hr />
                     <div class="container-fluid m-0 p-0">
                         <div class="row m-0 p-0">
                             <div class="col-md-4 p-2">
                                 <label>Email Address</label>
-                                <input readonly id="email" placeholder="User Email" class="form-control" type="email"/>
+                                <input readonly id="email" placeholder="User Email" class="form-control"
+                                    type="email" />
                             </div>
                             <div class="col-md-4 p-2">
                                 <label>First Name</label>
-                                <input id="firstName" placeholder="First Name" class="form-control" type="text"/>
+                                <input id="firstName" placeholder="First Name" class="form-control" type="text" />
                             </div>
                             <div class="col-md-4 p-2">
                                 <label>Last Name</label>
-                                <input id="lastName" placeholder="Last Name" class="form-control" type="text"/>
+                                <input id="lastName" placeholder="Last Name" class="form-control" type="text" />
                             </div>
                             <div class="col-md-4 p-2">
                                 <label>Mobile Number</label>
-                                <input id="mobile" placeholder="Mobile" class="form-control" type="mobile"/>
+                                <input id="mobile" placeholder="Mobile" class="form-control" type="mobile" />
                             </div>
                             <div class="col-md-4 p-2">
                                 <label>Password</label>
-                                <input id="password" placeholder="User Password" class="form-control" type="password"/>
+                                <input id="password" placeholder="User Password" class="form-control"
+                                    type="password" />
                             </div>
                         </div>
                         <div class="row m-0 p-0">
@@ -42,62 +44,76 @@
 
 <script>
     getProfile();
-    async function getProfile(){
-        showLoader();
-        let res=await axios.get("/user-profile")
-        hideLoader();
-        if(res.status===200 && res.data['status']==='success'){
-            let data=res.data['user'];
-            document.getElementById('email').value=data['email'];
-            document.getElementById('firstName').value=data['firstName'];
-            document.getElementById('lastName').value=data['lastName'];
-            document.getElementById('mobile').value=data['mobile'];
-            document.getElementById('password').value=data['password'];
-        }
-        else{
-            errorToast(res.data['message'])
-        }
 
+    function getProfile() {
+        showLoader();
+        $.ajax({
+            type: "GET",
+            url: "/user-profile",
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                hideLoader();
+                $("#email").val(data.user.email);
+                $("#firstName").val(data.user.firstName);
+                $("#lastName").val(data.user.lastName);
+                $("#mobile").val(data.user.mobile);
+                $("#password").val(data.user.password);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+
+        })
     }
 
-    async function onUpdate() {
-
-
-        let firstName = document.getElementById('firstName').value;
-        let lastName = document.getElementById('lastName').value;
-        let mobile = document.getElementById('mobile').value;
-        let password = document.getElementById('password').value;
+    function onUpdate() {
+        var email = $("#email").val();
+        var firstName = $("#firstName").val();
+        var lastName = $("#lastName").val();
+        var mobile = $("#mobile").val();
+        var password = $("#password").val();
 
         if(firstName.length===0){
-            errorToast('First Name is required')
+            alert("Please enter first name");
+            return false;
         }
-        else if(lastName.length===0){
-            errorToast('Last Name is required')
+        if(lastName.length===0){
+            alert("Please enter last name");
+            return false;
         }
-        else if(mobile.length===0){
-            errorToast('Mobile is required')
+        if(mobile.length===0){
+            alert("Please enter mobile number");
+            return false;
         }
-        else if(password.length===0){
-            errorToast('Password is required')
+        if(password.length===0){
+            alert("Please enter password");
+            return false;
         }
-        else{
-            showLoader();
-            let res=await axios.post("/user-update",{
-                firstName:firstName,
-                lastName:lastName,
-                mobile:mobile,
-                password:password
-            })
-            hideLoader();
-            if(res.status===200 && res.data['status']==='success'){
-                successToast(res.data['message']);
-                await getProfile();
+       
+        showLoader();
+        $.ajax({
+            type: "Post",
+            url: "/user-update",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                mobile: mobile,
+                password: password
+            }),
+            success: function(data) {
+                if(data.status==="success"){
+                    successToast(data.message);
+                }
+                hideLoader();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
             }
-            else{
-                errorToast(res.data['message'])
-            }
-        }
+
+        })
     }
-
 </script>
-

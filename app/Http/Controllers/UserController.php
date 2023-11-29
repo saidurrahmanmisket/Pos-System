@@ -57,7 +57,7 @@ class UserController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'User Login successfully'
-                ])->cookie('token', $token, 60*24*30);
+                ])->cookie('token', $token, 60 * 24 * 30);
             } else {
                 return response()->json([
                     'status' => 'failed',
@@ -73,7 +73,7 @@ class UserController extends Controller
     }
     public function userLogOut(Request $request)
     {
-        return redirect('/userLogin')->cookie('token','', -1);
+        return redirect('/userLogin')->cookie('token', '', -1);
     }
 
     function userSentOTP(Request $request)
@@ -129,11 +129,11 @@ class UserController extends Controller
             $email = $request->header('email');
             if ($email == "Expired token") {
                 return response()->json([
-                'status' => 'expired',
+                    'status' => 'expired',
                     'message' => "5min end, try again "
                 ]);
             }
-            
+
             $password = $request->input('password');
             User::where('email', '=', $email)->update(['password' => $password]);
 
@@ -148,16 +148,43 @@ class UserController extends Controller
             ]);
         }
     }
-    function userProfile(Request $request) {
+    function userProfile(Request $request)
+    {
         $email = $request->header('email');
-        $user = User::where('email','=', $email)->first();
-    
+        $user = User::where('email', '=', $email)->first();
+
         return response()->json([
             'status' => 'success',
             'message' => "Request successful",
             'user' => $user
         ]);
     }
+    function userUpdate(Request $request)
+    {
+        $email = $request->input('email');
+        $firstName = $request->input('firstName');
+        $lastName = $request->input('lastName');
+        $mobile = $request->input('mobile');
+        $user = User::where('email', '=', $email)->first();
+        $user->firstName = $firstName;
+        $user->lastName = $lastName;
+        $user->mobile = $mobile;
+        $user->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => "Profile Update successful",
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     // page index ////

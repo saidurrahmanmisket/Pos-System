@@ -37,7 +37,13 @@ Route::post('/send-otp', [UserController::class, 'userSentOTP']);
 Route::post('/verify-otp', [UserController::class, 'userVerifyOTP']);
 Route::post('/rest-password', [UserController::class, 'restPassword'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/user-profile',[UserController::class,'userProfile'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/user-update',[UserController::class,'userUpdate']);
 Route::get('/logout', [UserController::class, 'userLogOut']);
+
+Route::post('/category-create',[CategoryController::class, 'categoryCreate']);
+Route::post('/category-update',[CategoryController::class, 'categoryUpdate']);
+Route::post('/category-delete',[CategoryController::class, 'categoryDelete']);
+Route::get('/category-list',[CategoryController::class, 'categoryList']);
 
 
 
@@ -60,9 +66,9 @@ Route::get('/verifyOtp', [UserController::class, 'VerifyOTPPage']);
 // Route::get('/reportPage', [ReportController::class, 'ReportPage']);
 
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/categoryPage',[CategoryController::class,'CategoryPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/dashboard',[DashboardController::class,'DashboardPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/userProfile',[UserController::class,'ProfilePage'])->middleware([TokenVerificationMiddleware::class]);
-Route::get('/categoryPage',[CategoryController::class,'CategoryPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/customerPage',[CustomerController::class,'CustomerPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/productPage',[ProductController::class,'ProductPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/invoicePage',[InvoiceController::class,'InvoicePage'])->middleware([TokenVerificationMiddleware::class]);
