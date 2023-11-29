@@ -43,7 +43,7 @@ Route::get('/logout', [UserController::class, 'userLogOut']);
 Route::post('/category-create',[CategoryController::class, 'categoryCreate']);
 Route::post('/category-update',[CategoryController::class, 'categoryUpdate']);
 Route::post('/category-delete',[CategoryController::class, 'categoryDelete']);
-Route::get('/category-list',[CategoryController::class, 'categoryList']);
+Route::get('/category-list',[CategoryController::class, 'categoryList'])->middleware([TokenVerificationMiddleware::class]);
 
 
 
