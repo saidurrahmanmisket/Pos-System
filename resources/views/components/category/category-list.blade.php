@@ -83,3 +83,52 @@
 
     }
 </script> --}}
+
+<script>
+    var tableData = $('#tableData');
+    var tableList = $('#tableList');
+    getTableData()
+
+    function getTableData() {
+        tableData.DataTable().destroy();
+        tableList.empty();
+        showLoader();
+        $.ajax({
+            type: "get",
+            url: "/category-list",
+            success: function(response) {
+                if (response.status == 'success') {
+
+                    hideLoader();
+                    response.data.forEach(function(item, index) {
+                        let row = `<tr>
+                                        <td>${index+1}</td>
+                                        <td>${item['name']}</td>
+                                        <td>
+                                            <button data-id="${item['id']}" class="btn editBtn btn-sm btn-outline-success">Edit</button>
+                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                        </td>
+                                    </tr>`;
+                        tableList.append(row)
+                    })
+
+
+                    tableData.DataTable({
+                        order: [
+                            [0, 'desc']
+                        ]
+                    });
+                } else if (response.status == 'error') {
+                    errorToast(response.message);
+                    hideLoader();
+                }
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                errorToast(textStatus, errorThrown);
+            }
+
+        });
+
+    }
+</script>

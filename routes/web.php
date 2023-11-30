@@ -40,9 +40,9 @@ Route::get('/user-profile',[UserController::class,'userProfile'])->middleware([T
 Route::post('/user-update',[UserController::class,'userUpdate']);
 Route::get('/logout', [UserController::class, 'userLogOut']);
 
-Route::post('/category-create',[CategoryController::class, 'categoryCreate']);
-Route::post('/category-update',[CategoryController::class, 'categoryUpdate']);
-Route::post('/category-delete',[CategoryController::class, 'categoryDelete']);
+Route::post('/category-create',[CategoryController::class, 'CategoryCreate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/category-update',[CategoryController::class, 'categoryUpdate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/category-delete',[CategoryController::class, 'categoryDelete'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/category-list',[CategoryController::class, 'categoryList'])->middleware([TokenVerificationMiddleware::class]);
 
 

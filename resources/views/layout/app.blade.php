@@ -10,6 +10,7 @@
     <link href="{{asset('css/fontawesome.css')}}" rel="stylesheet" />
     <link href="{{asset('css/style.css')}}" rel="stylesheet" />
     <link href="{{asset('css/toastify.min.css')}}" rel="stylesheet" />
+
     <script src="{{asset('js/toastify-js.js')}}"></script>
     <script src="{{asset('js/axios.min.js')}}"></script>
     <script src="{{asset('js/config.js')}}"></script>
@@ -30,8 +31,10 @@
     
 </script>
 
-<script src="{{asset('js/bootstrap.bundle.js')}}"></script>
 <script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="{{asset('js/bootstrap.bundle.js')}}"></script>
+<script src="{{asset('js/nprogress.css')}}"></script>
+<script src="{{asset('js/jquery.dataTables.min.js')}}"></script>
 
 </body>
 </html>
