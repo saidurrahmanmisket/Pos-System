@@ -69,3 +69,62 @@
 
     }
 </script> --}}
+
+<script>
+    function UpdateForm(id) {
+
+        $('#update-modal').modal('show');
+        showLoader();
+        $.ajax({
+            type: "get",
+            url: "/category-by-id",
+            data: {
+                'category_id': id
+            },
+            success: function(response) {
+                if (response.status == 'success') {
+                    hideLoader();
+                    $('#categoryNameUpdate').val(response.data.name);
+                    $('#updateID').val(response.data.id);
+                } else {
+                    errorToast(response.message);
+                    hideLoader();
+
+                }
+            }
+        });
+
+    }
+
+    function Update() {
+        $id = $('#updateID').val();
+        $name = $('#categoryNameUpdate').val();
+        if ($name.length == 0) {
+            errorToast("Category name required");
+        } else {
+            $('#update-modal-close').click();
+            showLoader();
+            $.ajax({
+                type: "post",
+                url: "/category-update",
+                data: {
+                    'category_id': $id,
+                    'name': $name
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        hideLoader();
+                        successToast(response.message);
+                        getTableData();
+                    } else {
+                        errorToast(response.message);
+                        hideLoader();
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    errorToast(textStatus, errorThrown);
+                }
+            });
+        }
+    }
+</script>

@@ -71,4 +71,20 @@ class CategoryController extends Controller
             'message' => 'Category Not Found'
         ]);
     }
+    function categoryById(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+        $userId = $request->header('id');
+        $categoryData = Category::where('user_id', $userId)->where('id', $categoryId)->first();
+        if ($categoryData) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $categoryData
+            ]);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Category Not Found'
+        ]);
+    }
 }

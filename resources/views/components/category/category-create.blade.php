@@ -17,7 +17,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="modal-close" class="btn bg-gradient-primary" data-bs-dismiss="modal"
+                <button id="modal-close" class="btn bg-gradient-primary " data-bs-dismiss="modal"
                     aria-label="Close">Close</button>
                 <button onclick="Save()" id="save-btn" class="btn bg-gradient-success">Save</button>
             </div>
@@ -25,31 +25,8 @@
     </div>
 </div>
 
-
-{{-- <script>
-    async function Save() {
-        let categoryName = document.getElementById('categoryName').value;
-        if (categoryName.length === 0) {
-            errorToast("Category Required !")
-        }
-        else {
-            document.getElementById('modal-close').click();
-            showLoader();
-            let res = await axios.post("/create-category",{name:categoryName})
-            hideLoader();
-            if(res.status===201){
-                successToast('Request completed');
-                document.getElementById("save-form").reset();
-                await getList();
-            }
-            else{
-                errorToast("Request fail !")
-            }
-        }
-    }
-</script> --}}
-
 <script>
+    // on click 
     function Save() {
         var saveButton = $('#save-btn');
         var categoryName = $('#categoryName').val();
@@ -57,10 +34,7 @@
             errorToast("Category Required !")
         } 
         else {
-            // saveButton.attr('disabled', 'disabled');
-            // saveButton.html(
-            //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving ...'
-            //     );
+            $('#modal-close').click();
             $.ajax({
                 type: "post",
                 url: "/category-create",
@@ -68,10 +42,9 @@
                     "name": categoryName
                 },
                 success: function(response) {
-                    // saveButton.removeAttr('disabled');
-                    // saveButton.html('Save');
                     if (response.status === "success") {
                         successToast('Request completed');
+                        $('#save-form')[0].reset();
                         getTableData();
                     } else {
                         errorToast("Request fail !");
@@ -81,4 +54,10 @@
 
         }
     }
+    //on submit call save function
+    $('#save-form').submit(function (e) { 
+        e.preventDefault();
+        Save();
+        
+    });
 </script>

@@ -105,18 +105,17 @@
                                         <td>${index+1}</td>
                                         <td>${item['name']}</td>
                                         <td>
-                                            <button data-id="${item['id']}" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                            <button data-id="${item['id']}" onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
+                                            <button data-id="${item['id']}"  class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
                                         </td>
                                     </tr>`;
                         tableList.append(row)
                     })
-
-
                     tableData.DataTable({
                         order: [
                             [0, 'desc']
-                        ]
+                        ],
+                        lengthMenu: [5, 10, 15, 20, 30]
                     });
                 } else if (response.status == 'error') {
                     errorToast(response.message);
