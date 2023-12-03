@@ -106,7 +106,7 @@
                                         <td>${item['name']}</td>
                                         <td>
                                             <button data-id="${item['id']}" onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                                            <button data-id="${item['id']}"  class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                            <button data-id="${item['id']}"  data-bs-toggle="modal" data-bs-target="#delete-modal"  class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
                                         </td>
                                     </tr>`;
                         tableList.append(row)

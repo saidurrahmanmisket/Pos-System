@@ -9,7 +9,7 @@
             <div class="modal-footer justify-content-end">
                 <div>
                     <button type="button" id="delete-modal-close" class="btn bg-gradient-success mx-2" data-bs-dismiss="modal">Cancel</button>
-                    <button onclick="itemDelete()" type="button" id="confirmDelete" class="btn bg-gradient-danger" >Delete</button>
+                    <button onclick="itemDelete(data.item['id'])" type="button" id="confirmDelete" class="btn bg-gradient-danger" >Delete</button>
                 </div>
             </div>
         </div>
@@ -34,3 +34,28 @@
      }
 
 </script> --}}
+
+<script>
+    function itemDelete(id){
+        // $('#deleteID').val() = $(data.id);
+        // console.log(id);
+        $deleteID = id;
+        $.ajax({
+            type: "Post",
+            url: "/category-delete",
+            data: {'category_id': $deleteID},
+            success: function (response) {
+                if (response.status == 'success') {
+                    successToast(response.message);
+                    getList();
+                } else if (response.status == 'error') {
+                    errorToast(response.message);
+                }
+                
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                errorToast(textStatus, errorThrown);
+            }
+        });
+    }
+</script>
