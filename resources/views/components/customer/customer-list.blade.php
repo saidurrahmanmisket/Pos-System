@@ -30,59 +30,10 @@
     </div>
 </div>
 
-{{-- <script>
-    getList();
-
-
-    async function getList() {
-        showLoader();
-        let res = await axios.get("/list-customer");
-        hideLoader();
-
-        let tableList = $("#tableList");
-        let tableData = $("#tableData");
-
-        tableData.DataTable().destroy();
-        tableList.empty();
-
-        res.data.forEach(function(item, index) {
-            let row = `<tr>
-                    <td>${index+1}</td>
-                    <td>${item['name']}</td>
-                    <td>${item['email']}</td>
-                    <td>${item['mobile']}</td>
-                    <td>
-                        <button data-id="${item['id']}" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                        <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
-                    </td>
-                 </tr>`
-            tableList.append(row)
-        })
-
-        $('.editBtn').on('click', async function() {
-            let id = $(this).data('id');
-            await FillUpUpdateForm(id)
-            $("#update-modal").modal('show');
-        })
-
-        $('.deleteBtn').on('click', function() {
-            let id = $(this).data('id');
-            $("#delete-modal").modal('show');
-            $("#deleteID").val(id);
-        })
-
-        new DataTable('#tableData', {
-            order: [
-                [0, 'desc']
-            ],
-            lengthMenu: [5, 10, 15, 20, 30]
-        });
-
-    }
-</script> --}}
 
 <script>
-        var tableData = $('#tableData');
+    //showing customer data
+    var tableData = $('#tableData');
     var tableList = $('#tableList');
     function getCustomersData() {
         tableData.DataTable().destroy();
@@ -108,6 +59,20 @@
                                     </tr>`
                         $('#tableList').append(row)
                     });
+
+                    //click event of edit and delete customer and set value 
+                    $('.editBtn').on('click', function() {
+                        let id = $(this).data('id');
+                        $('#updateID').val(id);
+                        customerEdit(id);
+                    })
+
+                    $('.deleteBtn').on('click', function() {
+                        let id = $(this).data('id');
+                        $("#delete-modal").modal('show');
+                        $("#deleteID").val(id);
+                    })
+                    
                     tableData.DataTable({
                         order: [
                             [0, 'desc']
@@ -121,4 +86,5 @@
     getCustomersData();
 
     
+
 </script>

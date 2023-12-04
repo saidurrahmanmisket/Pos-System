@@ -25,68 +25,85 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="update-modal-close" class="btn bg-gradient-primary" data-bs-dismiss="modal" aria-label="Close">Close</button>
-                <button onclick="Update()" id="update-btn" class="btn bg-gradient-success" >Update</button>
+                <button id="update-modal-close" class="btn bg-gradient-primary" data-bs-dismiss="modal"
+                    aria-label="Close">Close</button>
+                <button onclick="Update()" id="update-btn" class="btn bg-gradient-success">Update</button>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    //edit customer 
 
-{{-- <script>
-
-
-
-    async function FillUpUpdateForm(id){
-        document.getElementById('updateID').value=id;
+    function customerEdit(id) {
         showLoader();
-        let res=await axios.post("/customer-by-id",{id:id})
+        $.ajax({
+            type: "Get",
+            url: "/customer-by-id",
+            data: {
+                customer_id: id
+            },
+            success: function(response) {
+                if (response.status == 'success') {
+                    hideLoader();
+                    $("#update-modal").modal('show');
+                    $('#customerNameUpdate').val(response.data['name']);
+                    $('#customerEmailUpdate').val(response.data['email']);
+                    $('#customerMobileUpdate').val(response.data['mobile']);
+                    $('#updateID').val(response.data['id']);
+                } else {
+                    errorToast(response.message);
+                    hideLoader();
+                }
+            },
+            error: function(error) {
+                errorToast(error.responseJSON.message);
+            }
+        })
         hideLoader();
-        document.getElementById('customerNameUpdate').value=res.data['name'];
-        document.getElementById('customerEmailUpdate').value=res.data['email'];
-        document.getElementById('customerMobileUpdate').value=res.data['mobile'];
     }
-
-
-    async function Update() {
-
-        let customerName = document.getElementById('customerNameUpdate').value;
-        let customerEmail = document.getElementById('customerEmailUpdate').value;
-        let customerMobile = document.getElementById('customerMobileUpdate').value;
-        let updateID = document.getElementById('updateID').value;
-
-
-        if (customerName.length === 0) {
-            errorToast("Customer Name Required !")
-        }
-        else if(customerEmail.length===0){
-            errorToast("Customer Email Required !")
-        }
-        else if(customerMobile.length===0){
-            errorToast("Customer Mobile Required !")
-        }
-        else {
-
-            document.getElementById('update-modal-close').click();
-
+    
+//update customer
+    function Update() {
+        let name = $('#customerNameUpdate').val();
+        let email = $('#customerEmailUpdate').val();
+        let mobile = $('#customerMobileUpdate').val();
+        let id = $('#updateID').val();
+        if (name.length === 0) {
+            errorToast("Customer Name Required!")
+        } else if (email.length === 0) {
+            errorToast("Customer Email Required!")
+        } else if (mobile.length === 0) {
+            errorToast("Customer Mobile Required!")
+        } else {
             showLoader();
-
-            let res = await axios.post("/update-customer",{name:customerName,email:customerEmail,mobile:customerMobile,id:updateID})
-
+            $.ajax({
+                type: "Post",
+                url: "/customer-update",
+                data: {
+                    name: name,
+                    email: email,
+                    mobile: mobile,
+                    customer_id: id
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        $('#update-modal').modal('hide');
+                        hideLoader();
+                        successToast(response.message);
+                        $('#update-form')[0].reset();
+                        getCustomersData();
+                    } else {
+                        errorToast(response.message);
+                        hideLoader();
+                    }
+                },
+                error: function(error) {
+                    errorToast(error.responseJSON.message);
+                }
+            })
             hideLoader();
-
-            if(res.status===200 && res.data===1){
-
-                successToast('Request completed');
-
-                document.getElementById("update-form").reset();
-
-                await getList();
-            }
-            else{
-                errorToast("Request fail !")
-            }
         }
     }
-
-</script> --}}
+</script>
