@@ -97,7 +97,7 @@
                         $("#create-modal").modal('hide');
                         successToast(response.message);
                         $('#save-form')[0].reset();
-                        // getTableData();
+                        getCustomersData();
                     } else if (response.status == 'error') {
                         errorToast(response.message);
                     }

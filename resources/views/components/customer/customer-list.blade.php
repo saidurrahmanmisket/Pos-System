@@ -80,3 +80,45 @@
 
     }
 </script> --}}
+
+<script>
+        var tableData = $('#tableData');
+    var tableList = $('#tableList');
+    function getCustomersData() {
+        tableData.DataTable().destroy();
+        tableList.empty();
+        showLoader();
+        $.ajax({
+            type: "get",
+            url: "/customer-list",
+            success: function(response) {
+                if (response.status == 'success') {
+                    hideLoader();
+                    // $('#tableList').empty();
+                    response.data.forEach(function(item, index) {
+                        let row = `<tr>
+                                        <td>${index + 1}</td>
+                                        <td>${item['name']}</td>
+                                        <td>${item['email']}</td>
+                                        <td>${item['mobile']}</td>
+                                        <td>
+                                            <button data-id="${item['id']}" class="btn editBtn btn-sm btn-outline-success">Edit</button>
+                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                        </td>
+                                    </tr>`
+                        $('#tableList').append(row)
+                    });
+                    tableData.DataTable({
+                        order: [
+                            [0, 'desc']
+                        ],
+                        lengthMenu: [5, 10, 15, 20, 30]
+                    });
+                };
+            }
+        })
+    }
+    getCustomersData();
+
+    
+</script>
