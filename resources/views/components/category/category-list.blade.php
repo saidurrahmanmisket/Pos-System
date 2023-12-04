@@ -105,12 +105,20 @@
                                         <td>${index+1}</td>
                                         <td>${item['name']}</td>
                                         <td>
-                                            <button data-id="${item['id']}" onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                                            <button data-id="${item['id']}"  data-bs-toggle="modal" data-bs-target="#delete-modal"  class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                            <button data-id="${item['id']}" edit onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
+                                            <button data-id="${item['id']}"  delete  data-bs-toggle="modal" data-bs-target="#delete-modal"  class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
                                         </td>
                                     </tr>`;
                         tableList.append(row)
                     })
+
+                    //set delete button id
+                    $('.deleteBtn').on('click', function() {
+                        let id = $(this).data('id');
+                        $("#delete-modal").modal('show');
+                        $("#deleteID").val(id);
+                    })
+                    
                     tableData.DataTable({
                         order: [
                             [0, 'desc']
