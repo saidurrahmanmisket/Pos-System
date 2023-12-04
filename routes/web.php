@@ -30,7 +30,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Api Routes 
+// Api Routes Start from here ===========================================================================================================
+
+
+//user route
 Route::post('/user-registration', [UserController::class, 'userRegistration']);
 Route::post('/user-login', [UserController::class, 'userLogin']);
 Route::post('/send-otp', [UserController::class, 'userSentOTP']);
@@ -40,18 +43,30 @@ Route::get('/user-profile',[UserController::class,'userProfile'])->middleware([T
 Route::post('/user-update',[UserController::class,'userUpdate']);
 Route::get('/logout', [UserController::class, 'userLogOut']);
 
+//category route
 Route::post('/category-create',[CategoryController::class, 'CategoryCreate'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/category-update',[CategoryController::class, 'categoryUpdate'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/category-delete',[CategoryController::class, 'categoryDelete'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/category-list',[CategoryController::class, 'categoryList'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/category-by-id',[CategoryController::class, 'categoryById'])->middleware([TokenVerificationMiddleware::class]);
 
-
+//customer route
 Route::post('/customer-create',[CustomerController::class, 'customerCreate'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/customer-update',[CustomerController::class, 'customerUpdate'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/customer-delete',[CustomerController::class, 'customerDelete'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/customer-list',[CustomerController::class, 'customerList'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/customer-by-id',[CustomerController::class, 'customerById'])->middleware([TokenVerificationMiddleware::class]);
+
+
+//product route
+Route::post('/product-create',[ProductController::class, 'productCreate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/product-update',[ProductController::class, 'productUpdate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/product-delete',[ProductController::class, 'productDelete'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/product-list',[ProductController::class, 'productList'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/product-by-id',[ProductController::class, 'productById'])->middleware([TokenVerificationMiddleware::class]);
+
+
+// Api Routes End here ===========================================================================================================
 
 
 
@@ -60,7 +75,6 @@ Route::get('/customer-by-id',[CustomerController::class, 'customerById'])->middl
 
 
 // Page Routes start from here=====================================================================================================================
-
 
 Route::get('/', [HomeController::class, 'HomePage']);
 Route::get('/userLogin', [UserController::class, 'LoginPage']);
