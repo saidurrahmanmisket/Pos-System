@@ -16,7 +16,6 @@ class CategoryController extends Controller
     {
         $category = new Category();
         $category->name = $request->name;
-        // dd($request->header('id'));
         $category->user_id = $request->header('id');
         $category->save();
         return response()->json([

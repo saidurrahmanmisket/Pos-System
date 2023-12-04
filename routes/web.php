@@ -47,24 +47,28 @@ Route::get('/category-list',[CategoryController::class, 'categoryList'])->middle
 Route::get('/category-by-id',[CategoryController::class, 'categoryById'])->middleware([TokenVerificationMiddleware::class]);
 
 
+Route::post('/customer-create',[CustomerController::class, 'customerCreate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/customer-update',[CustomerController::class, 'customerUpdate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/customer-delete',[CustomerController::class, 'customerDelete'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/customer-list',[CustomerController::class, 'customerList'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/customer-by-id',[CustomerController::class, 'customerById'])->middleware([TokenVerificationMiddleware::class]);
 
-// Page Routes
-// Route::get('/userProfile',[UserController::class,'ProfilePage']);
+
+
+
+
+
+
+// Page Routes start from here=====================================================================================================================
+
 
 Route::get('/', [HomeController::class, 'HomePage']);
 Route::get('/userLogin', [UserController::class, 'LoginPage']);
 Route::get('/userRegistration', [UserController::class, 'RegistrationPage']);
 Route::get('/sendOtp', [UserController::class, 'SendOtpPage']);
 Route::get('/verifyOtp', [UserController::class, 'VerifyOTPPage']);
-// Route::get('/resetPassword', [UserController::class, 'ResetPasswordPage']);
-// Route::get('/dashboard', [DashboardController::class, 'DashboardPage']);
-// Route::get('/userProfile', [UserController::class, 'ProfilePage']);
-// Route::get('/categoryPage', [CategoryController::class, 'CategoryPage']);
-// Route::get('/customerPage', [CustomerController::class, 'CustomerPage']);
-// Route::get('/productPage', [ProductController::class, 'ProductPage']);
-// Route::get('/invoicePage', [InvoiceController::class, 'InvoicePage']);
-// Route::get('/salePage', [InvoiceController::class, 'SalePage']);
-// Route::get('/reportPage', [ReportController::class, 'ReportPage']);
+
+
 
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/categoryPage',[CategoryController::class,'CategoryPage'])->middleware([TokenVerificationMiddleware::class]);
@@ -75,3 +79,7 @@ Route::get('/productPage',[ProductController::class,'ProductPage'])->middleware(
 Route::get('/invoicePage',[InvoiceController::class,'InvoicePage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/salePage',[InvoiceController::class,'SalePage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/reportPage',[ReportController::class,'ReportPage'])->middleware([TokenVerificationMiddleware::class]);
+
+
+
+// Page Routes end here=====================================================================================================================
