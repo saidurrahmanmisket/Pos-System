@@ -30,8 +30,8 @@
                                 <label class="form-label mt-2">Image</label>
                                 <input oninput="oldImg.src=window.URL.createObjectURL(this.files[0])"  type="file" class="form-control" id="productImgUpdate">
 
-                                <input type="text" class="d-none" id="updateID">
-                                <input type="text" class="d-none" id="filePath">
+                                <input type="text" class="" id="updateID">
+                                <input type="text" class="" id="filePath">
 
 
                             </div>
@@ -143,3 +143,27 @@
         }
     }
 </script> --}}
+
+<script>
+    function UpdateForm(id) {
+        showLoader();
+        $.ajax({
+            type: "get",
+            url: "/product-by-id",
+            data: {
+                product_id : id
+            },
+            success: function (response) {
+                if (response.status == 'success') {
+                    $('#productNameUpdate').val(response.product.name);
+                    $('#productPriceUpdate').val(response.product.price);
+                    $('#productUnitUpdate').val(response.product.unit);
+                    $('#productCategoryUpdate').val(response.product.category_id);
+                }
+                
+            }
+        });
+        hideLoader();
+        
+    }
+</script>

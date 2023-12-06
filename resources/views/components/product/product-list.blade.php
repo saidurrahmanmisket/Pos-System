@@ -129,7 +129,7 @@
                                         <td>${item['price']}</td>
                                         <td>${item['unit']}</td>
                                         <td>
-                                            <button data-id="${item['id']}"  class="btn editBtn btn-sm btn-outline-success">Edit</button>
+                                            <button data-id="${item['id']}"  onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
                                             <button data-id="${item['id']}" data-img_url="${item['img_url']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
                                         </td>
                                     </tr>`;
@@ -149,9 +149,7 @@
                         $("#update-modal").modal('show');
                         $("#deleteID").val(id);
                         $("#deleteFilePath").val(item['img_url'])
-                        console.log(item['img_url'])
-                        console.log(id)
-                        console.log(item['img_url'])
+                        
 
                     })
                     $('.deleteBtn').on('click', function() {

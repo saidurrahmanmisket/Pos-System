@@ -20,10 +20,10 @@ class ProductController extends Controller
     {
         try {
         $validator = Validator::make($request->all(), [
-            'category_id' => 'required|max:50',
+            'category_id' => 'required|max:50|numeric',
             'name' => 'required|max:255',
-            'price' => 'required|max:50',
-            'unit' => 'required|max:50',
+            'price' => 'required|numeric',
+            'unit' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ], [
             'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
