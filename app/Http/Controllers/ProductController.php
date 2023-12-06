@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
+
 class ProductController extends Controller
 {
     function ProductPage()
@@ -17,28 +18,29 @@ class ProductController extends Controller
 
     function productCreate(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required|max:255',
-        //     'price' => 'required|max:50',
-        //     'unit' => 'required|max:50',
-        //     'category_id' => 'required|max:50',
-        //     'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        // ], [
-        //     'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
-        // ]);
+        try {
+        $validator = Validator::make($request->all(), [
+            'category_id' => 'required|max:50',
+            'name' => 'required|max:255',
+            'price' => 'required|max:50',
+            'unit' => 'required|max:50',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ], [
+            'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'status' => 404,
-        //         'message' => $validator->errors()
-        //     ]);
-        // }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'message' => $validator->errors()->toArray()
+            ]);
+        }
 
         $user_id = $request->header('id');
         $image = $request->file('image');
         $img_ext = $image->getClientOriginalExtension();
         $image_name = time() . '.' . $img_ext; // Generate a unique name for the image
-
+        
         $productData = [
             'user_id' => $user_id,
             'category_id' => $request->input('category_id'),
@@ -47,10 +49,9 @@ class ProductController extends Controller
             'unit' => $request->input('unit'),
             'img_url' => $image_name
         ];
-
+        
         DB::beginTransaction();
 
-        try {
             $createProduct = Product::create($productData);
 
             if ($createProduct) {
