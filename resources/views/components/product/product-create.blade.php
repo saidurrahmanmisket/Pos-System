@@ -150,7 +150,7 @@
         let productName = $('#productName').val();
         let productPrice = $('#productPrice').val();
         let productUnit = $('#productUnit').val();
-        let productImg = $('#productImg').prop('files')[0];;
+        let productImg = $('#productImg').prop('files')[0];
 
         if (productCategory.length === 0) {
             errorToast("Product Category Required!")

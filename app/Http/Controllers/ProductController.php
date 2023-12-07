@@ -75,22 +75,10 @@ class ProductController extends Controller
 
     function productUpdate(Request $request)
     {
-        $productId = $request->input('product_id');
-        $user_id = $request->header('id');
-        $product = Product::where('id', $productId)->where('user_id', $user_id)->first();
-
-        if (!$product) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Product not found'
-            ]);
-        }
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'price' => 'required|max:50',
             'unit' => 'required|max:50',
-            'category_id' => 'required|max:50',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ], [
             'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
@@ -100,6 +88,22 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 400,
                 'message' => $validator->errors()
+            ]);
+        }
+
+        $productId = $request->input('product_id');
+        $user_id = $request->header('id');
+        $image = $request->file('image');
+        $categoryId = $request->input('category_id');
+        $product = Product::where('id', $productId)
+        ->where('user_id', $user_id)
+        ->where('category_id', $categoryId)
+        ->first();
+
+        if (!$product) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Product not found'
             ]);
         }
 

@@ -129,7 +129,7 @@
                                         <td>${item['price']}</td>
                                         <td>${item['unit']}</td>
                                         <td>
-                                            <button data-id="${item['id']}"  onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
+                                            <button data-id="${item['id']}"  onclick="setFromValue(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
                                             <button data-id="${item['id']}" data-img_url="${item['img_url']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
                                         </td>
                                     </tr>`;
@@ -144,14 +144,14 @@
                             lengthMenu: [5, 10, 15, 20, 30]
                         });
                     //set delete button id
-                    $('.editBtn').on('click', function() {
-                        let id = $(this).data('id');
-                        $("#update-modal").modal('show');
-                        $("#deleteID").val(id);
-                        $("#deleteFilePath").val(item['img_url'])
+                    // $('.editBtn').on('click', function() {
+                    //     let id = $(this).data('id');
+                    //     $("#update-modal").modal('show');
+                    //     $("#deleteID").val(id);
+                    //     $("#deleteFilePath").val(item['img_url'])
                         
 
-                    })
+                    // })
                     $('.deleteBtn').on('click', function() {
                         let id = $(this).data('id');
                         let img_url = $(this).data('img_url');
