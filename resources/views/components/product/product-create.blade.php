@@ -19,10 +19,10 @@
                                 <input type="text" class="form-control" id="productName">
 
                                 <label class="form-label mt-2">Price<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="productPrice">
+                                <input type="number" class="form-control" id="productPrice">
 
                                 <label class="form-label mt-2">Unit<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="productUnit">
+                                <input type="number" class="form-control" id="productUnit">
 
                                 <br />
                                 <img class="w-15" id="newImg" src="{{ asset('images/default.jpg') }}" />

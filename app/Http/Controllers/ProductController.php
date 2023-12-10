@@ -19,38 +19,38 @@ class ProductController extends Controller
     function productCreate(Request $request)
     {
         try {
-        $validator = Validator::make($request->all(), [
-            'category_id' => 'required|max:50|numeric',
-            'name' => 'required|max:255',
-            'price' => 'required|numeric',
-            'unit' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        ], [
-            'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 422,
-                'message' => $validator->errors()->toArray()
+            $validator = Validator::make($request->all(), [
+                'category_id' => 'required|max:50|numeric',
+                'name' => 'required|max:255',
+                'price' => 'required|numeric',
+                'unit' => 'required|numeric',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            ], [
+                'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
             ]);
-        }
 
-        $user_id = $request->header('id');
-        $image = $request->file('image');
-        $img_ext = $image->getClientOriginalExtension();
-        $image_name = time() . '.' . $img_ext; // Generate a unique name for the image
-        
-        $productData = [
-            'user_id' => $user_id,
-            'category_id' => $request->input('category_id'),
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'unit' => $request->input('unit'),
-            'img_url' => $image_name
-        ];
-        
-        DB::beginTransaction();
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'message' => $validator->errors()->toArray()
+                ]);
+            }
+
+            $user_id = $request->header('id');
+            $image = $request->file('image');
+            $img_ext = $image->getClientOriginalExtension();
+            $image_name = time() . '.' . $img_ext; // Generate a unique name for the image
+
+            $productData = [
+                'user_id' => $user_id,
+                'category_id' => $request->input('category_id'),
+                'name' => $request->input('name'),
+                'price' => $request->input('price'),
+                'unit' => $request->input('unit'),
+                'img_url' => $image_name
+            ];
+
+            DB::beginTransaction();
 
             $createProduct = Product::create($productData);
 
@@ -75,67 +75,91 @@ class ProductController extends Controller
 
     function productUpdate(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'price' => 'required|max:50',
-            'unit' => 'required|max:50',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        ], [
-            'image.mimes' => 'Please select a jpg, png, jpg, gif, or svg image',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 400,
-                'message' => $validator->errors()
-            ]);
-        }
-
-        $productId = $request->input('product_id');
-        $user_id = $request->header('id');
-        $image = $request->file('image');
-        $categoryId = $request->input('category_id');
-        $product = Product::where('id', $productId)
-        ->where('user_id', $user_id)
-        ->where('category_id', $categoryId)
-        ->first();
-
-        if (!$product) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Product not found'
-            ]);
-        }
-
-        $oldImageUrl = $request->input('file_path');
-
-        $productData = [
-            'user_id' => $user_id,
-            'category_id' => $request->input('category_id'),
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'unit' => $request->input('unit'),
-        ];
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $img_ext = $image->getClientOriginalExtension();
-            $image_name = time() . '.' . $img_ext; // Generate a unique name for the image
-            $productData['img_url'] = $image_name;
-
-            $image->move(public_path('images/product'), $image_name);
-
-            // Remove the old image file
-            $oldFilePath = public_path('images/product') . '/' . $oldImageUrl;
-            if (File::exists($oldFilePath)) {
-                File::delete($oldFilePath);
-            }
-        }
-        DB::beginTransaction();
-
         try {
-            $product->update($productData);
+            if ($request->hasFile('image')) {
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        'category_id' => 'required|numeric',
+                        'name' => 'required|max:255',
+                        'price' => 'required|max:50',
+                        'unit' => 'required|max:50',
+                        'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+                    ]
+                );
+                if ($validator->fails()) {
+                    return response()->json([
+                        'status' => 400,
+                        'message' => $validator->errors()
+                    ]);
+                }
+                $user_id = $request->header('id');
+                $productId = $request->input('product_id');
+                $categoryId = $request->input('category_id');
+                $name = $request->input('name');
+                $price = $request->input('price');
+                $unit = $request->input('unit');
+                $image = $request->file('image');
 
+                //generate unique name for image
+                $img_ext = $image->getClientOriginalExtension();
+                $image_name = time() . '.' . $img_ext;
+
+                $productData = [
+                    'category_id' => $categoryId,
+                    'name' => $name,
+                    'price' => $price,
+                    'unit' => $unit,
+                    'img_url' => $image_name
+                ];
+                DB::beginTransaction();
+                $updateProduct = Product::where('id', $productId)->where('user_id', $user_id)->update($productData);
+                DB::commit();
+                $image->move(public_path('images/product'), $image_name);
+
+
+                // Remove the old image file
+                $oldFilePath = public_path('images/product') . '/' . $request->input('file_path');
+                if (File::exists($oldFilePath)) {
+                    File::delete($oldFilePath);
+                }
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Product updated successfully'
+
+                ]);
+            }
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'category_id' => 'required|numeric',
+                    'name' => 'required|max:255',
+                    'price' => 'required|max:50',
+                    'unit' => 'required|max:50',
+                ]
+            );
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()
+                ]);
+            }
+            $user_id = $request->header('id');
+            $productId = $request->input('product_id');
+            $categoryId = $request->input('category_id');
+            $name = $request->input('name');
+            $price = $request->input('price');
+            $unit = $request->input('unit');
+
+            $productData = [
+                'category_id' => $categoryId,
+                'name' => $name,
+                'price' => $price,
+                'unit' => $unit,
+            ];
+            DB::beginTransaction();
+            $updateProduct = Product::where('id', $productId)->where('user_id', $user_id)->update($productData);
             DB::commit();
 
             return response()->json([
@@ -143,11 +167,9 @@ class ProductController extends Controller
                 'message' => 'Product updated successfully'
             ]);
         } catch (\Exception $e) {
-            DB::rollback();
-
             return response()->json([
-                'status' => 500,
-                'message' => 'Product update failed: ' . $e->getMessage()
+                'status' => 404,
+                'message' => 'Product not updated: ' . $e->getMessage()
             ]);
         }
     }
