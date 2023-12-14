@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceProduct;
 use Exception;
@@ -24,26 +25,28 @@ class InvoiceController extends Controller
     //Api routes
     function invoiceCreate(Request $request)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
         try {
             $userID = $request->header('id');
-            $total = $request->input('total');
-            $vat = $request->input('vat');
-            $discount = $request->input('discount');
-            $payable = $request->input('payable');
-            $customerId = $request->input('customer_id');
+
+            $total = $request->json('total');
+            // $total = $request->total;
+            $vat = $request->json('vat');
+            $discount = $request->json('discount');
+            $payable = $request->json('payable');
+            $customerId = $request->json('customer_id');
 
             $invoice = Invoice::create([
-                'user_id' => $userID,
                 'total' => $total,
-                'vat' => $vat,
                 'discount' => $discount,
+                'vat' => $vat,
                 'payable' => $payable,
+                'user_id' => $userID,
                 'customer_id' => $customerId
             ]);
 
             $invoiceId = $invoice->id;
-            $products = $request->input('products');
+            $products = $request->json('products');
 
             // foreach ($products as $product) {
             //     InvoiceProduct::create([
@@ -61,8 +64,8 @@ class InvoiceController extends Controller
                 $invoiceProducts[] = [
                     'invoice_id' => $invoiceId,
                     'product_id' => $product['product_id'],
-                    'qty' => $product['qty'],
                     'user_id' => $userID,
+                    'qty' => $product['qty'],
                     'sale_price' => $product['sale_price']
                 ];
             }
@@ -78,12 +81,43 @@ class InvoiceController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 500,
-                'error' => $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
 
+    function invoiceDetails(Request $request)
+    {
+        try {
+            $userID = $request->header('id');
+            $customerId = $request->input('customer_id');
+            $invoiceId = $request->input('invoice_id');
 
+            $customer = Customer::where('user_id', $userID)
+                ->where('id', $customerId)
+                ->first();
+
+            $invoice = Invoice::where('user_id', $userID)
+                ->where('id', $invoiceId)
+                ->first();
+            $invoiceProducts = InvoiceProduct::where('user_id', $userID)
+                ->where('invoice_id', $invoiceId)
+                ->get();
+
+            
+            return response()->json([
+                'status' => 200,
+                'customer' => $customer,
+                'invoice' => $invoice,
+                'invoiceProducts' => $invoiceProducts,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 
     function invoiceList(Request $request)
     {
@@ -133,6 +167,8 @@ class InvoiceController extends Controller
         }
     }
 
+
+    //not implement , create for future use
     function invoiceUpdate(Request $request)
     {
         DB::beginTransaction();
