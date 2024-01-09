@@ -33,9 +33,9 @@
 
 <script>
     //showing customer data
-    var tableData = $('#tableData');
-    var tableList = $('#tableList');
     function getCustomersData() {
+        var tableData = $('#tableData');
+        var tableList = $('#tableList');
         tableData.DataTable().destroy();
         tableList.empty();
         showLoader();

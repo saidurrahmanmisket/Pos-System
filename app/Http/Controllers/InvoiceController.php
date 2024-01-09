@@ -86,6 +86,32 @@ class InvoiceController extends Controller
         }
     }
 
+    function invoiceSelect(Request $request)
+{
+    try {
+        $userID = $request->header('id');
+        $data = Invoice::where('user_id', $userID)
+        ->with('customer')    
+        ->get();
+        if (!$data) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'data not found'
+            ]);
+        }
+        return response()->json([
+            'status' => 200,
+            'data' => $data,
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage()
+        ]);
+    }
+}
+
+
     function invoiceDetails(Request $request)
     {
         try {
