@@ -39,7 +39,7 @@
                     <div class="row">
                         <div class="col-12">
                             <p class="text-bold text-xs my-1 text-dark"> TOTAL: <i class="bi bi-currency-dollar"></i> <span
-                                    id="total"></span></p>
+                                    id="total">0</span></p>
                             <p class="text-bold text-xs my-2 text-dark"> PAYABLE: <i class="bi bi-currency-dollar"></i>
                                 <span id="payable"></span>
                             </p>
@@ -50,8 +50,7 @@
                                 <span id="discount"></span>
                             </p>
                             <span class="text-xxs">Discount(%):</span>
-                            <input onkeydown="return false" value="0" min="0" type="number" step="0.25"
-                                onchange="DiscountChange()" class="form-control w-40 " id="discountP" />
+                            <input value="0" class="form-control w-40 " id="discountP" />
                             <p>
                                 <button onclick="createInvoice()"
                                     class="btn  my-3 bg-gradient-primary w-40">Confirm</button>
@@ -115,12 +114,15 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-12 p-1">
-                                    <label class="form-label">Product ID *</label>
-                                    <input type="text" class="form-control" id="PId">
+                                    <div class="d-none">
+                                        <label class="form-label">Product ID *</label>
+                                        <input type="text" class="form-control" id="PId">
+                                    </div>
                                     <label class="form-label mt-2">Product Name *</label>
-                                    <input type="text" class="form-control" id="PName">
+                                    <input type="text" class="form-control" id="PName" readonly>
                                     <label class="form-label mt-2">Product Price *</label>
                                     <input type="text" class="form-control" id="PPrice">
+
                                     <label class="form-label mt-2">Product Qty *</label>
                                     <input type="text" class="form-control" id="PQty">
                                 </div>
@@ -131,7 +133,7 @@
                 <div class="modal-footer">
                     <button id="modal-close" class="btn bg-gradient-primary" data-bs-dismiss="modal"
                         aria-label="Close">Close</button>
-                    <button onclick="add()" id="save-btn" class="btn bg-gradient-success">Add</button>
+                    <button onclick="pickProduct()" id="save-btn" class="btn bg-gradient-success">Pick</button>
                 </div>
             </div>
         </div>
@@ -387,7 +389,7 @@
                             let row = `<tr>
                                         <td class="col-10">${item['name']}</td>
                                         <td>
-                                            <button data-id="${item['id']}" class="btn customerPick btn-sm btn-outline-success">Pick</button>
+                                            <button data-id="${item['id']}" class="customerPick float-end btn m-0  bg-gradient-primary">Pick</button>
                                         </td>
                                     </tr>`
                             $('#customerList').append(row)
@@ -421,11 +423,16 @@
                         response.product.forEach(function(item, index) {
                             let row = `<tr>
                                         <td class="col-10">${item['name']}</td>
+
                                         <td>
-                                            <button data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}"  class="btn productPick btn-sm btn-outline-success">Pick</button>
+                                            <button data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}" 
+                                            class="float-end btn m-0  bg-gradient-primary addProduct">Add</button>
                                             
-                                        </td>
-                                    </tr>`;
+                                            
+                                            </td>
+                                            </tr>`;
+                            // data-bs-toggle="modal" data-bs-target="#create-modal"
+                            // <button data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}"  class="btn productPick btn-sm btn-outline-success">Pick</button>
 
                             productList.append(row)
 
@@ -436,69 +443,103 @@
                             ],
                             lengthMenu: [5, 10, 15, 20, 30]
                         });
-                        //set delete button id
-                        $('.productPick').on('click', function() {
-                console.log($('.productPick'));
 
-                let id = $(this).data('id');
-                let name = $(this).data('name');
-                let price = $(this).data('price');
-
-                let invoiceList = $('#invoiceList');
-                let row = `<tr>
-                                        <td class="col-1">${name}</td>
-                                        <td>
-                                            <input type="number" class="form-control invoiceQty" defaultValue="1">
-                                        </td>
-                                        <td>${price}</td>
-                                        <td class="col-1">
-                                            <button data-id="${id}" class="btn deleteBtn btn-sm btn-outline-danger">Remove</button>
-                                        </td>
-                                    </tr>`;
-                invoiceList.append(row)
+                        $('.addProduct').on('click', function() {
 
 
-            })
+                            $('#create-modal').modal('show');
 
-                        // $('.invoiceQty').on('change',function(e) {
-                        //     console.log(e);
-                        // })
+                            let id = $(this).data('id');
+                            let name = $(this).data('name');
+                            let price = $(this).data('price');
+                            $('#PId').val(id);
+                            $('#PName').val(name);
+                            $('#PPrice').val(price);
+                            $('#PQty').val(1);
+                        })
                     }
                 }
 
             });
-           
+
         }
+
         productList();
 
+        function pickProduct() {
+            let id = $('#PId').val();
+            let name = $('#PName').val();
+            let price = $('#PPrice').val();
+            let quantity = $('#PQty').val();
+            if (quantity <= 0) {
+                errorToast("Quantity Can't be 0")
+            } else {
 
-        $('.productPick').on('click', function() {
-            console.log($('.productPick'));
+                let total = price * quantity;
 
-            let id = $(this).data('id');
-            let name = $(this).data('name');
-            let price = $(this).data('price');
+                let invoiceList = $('#invoiceList');
+                let row = `<tr data-id="${id}">
+                            <td class="col-1">${name}</td>
+                            <td>${quantity}</td>
+                            <td>${total}</td>
+                            <td class="col-1">
+                                <button data-total="${total}" onClick="deleteProduct(this)" class="btn  btn-sm btn-outline-danger">Remove</button>
+                            </td>
+                        </tr>`;
 
-            let invoiceList = $('#invoiceList');
-            let row = `<tr>
-                                        <td class="col-1">${name}</td>
-                                        <td>
-                                            <input type="number" class="form-control invoiceQty" defaultValue="1">
-                                        </td>
-                                        <td>${price}</td>
-                                        <td class="col-1">
-                                            <button data-id="${id}" class="btn deleteBtn btn-sm btn-outline-danger">Remove</button>
-                                        </td>
-                                    </tr>`;
-            invoiceList.append(row)
+                //check duplicate
+                let exists = $('#invoiceList').find('tr[data-id="' + id + '"]').length > 0;
+                if (exists) {
+                    errorToast('This product Already Exists');
+                } else {
+                    $('#create-modal').modal('hide');
+                    let grandTotal = parseFloat($('#total').text());
+                    let vat = parseFloat($('#vat').text());
+                    let discount = parseFloat($('#discount').text());
+                    let discountPercent = parseFloat($('#discountP').val());
 
+                    /*
+                         fristly calculate the total price of all products
+                         then calculate vat 
+                         then discount the percentage
+                    */
+                    grandTotal += total;
+                    $('#total').text(grandTotal);
 
-        })
-        // let qty = document.getElementById('');
-        // console.log(qty);
-        // qty.addEventListener('onChange', function(event) {
-        //     console.log(event);
+                    let calculateVAtPercent = (5 / 100) * grandTotal; //5% vat
+                    $('#vat').text(calculateVAtPercent.toFixed(2));
 
-        // })
+                    let payableTotal = calculateVAtPercent + grandTotal;
+
+                    let calculateDiscountPercent = (discountPercent / 100) * payableTotal;
+
+                    $('#payable').text((payableTotal - calculateDiscountPercent).toFixed(2));
+
+                    invoiceList.append(row)
+
+                }
+
+            }
+
+        }
+
+        function deleteProduct(button) {
+            $(button).closest('tr').remove();
+            console.log("reomove");
+            let total = $(button).data('total');
+            let grandTotal = parseFloat($('#total').text());
+            grandTotal -= total;
+            $('#total').text(grandTotal);
+
+            let calculateVAtPercent = (5 / 100) * grandTotal; //5% vat
+            $('#vat').text(calculateVAtPercent.toFixed(2));
+
+            let payableTotal = calculateVAtPercent + grandTotal;
+
+            let calculateDiscountPercent = (discountPercent / 100) * payableTotal;
+            
+            $('#payable').text((payableTotal - calculateDiscountPercent).toFixed(2));
+
+        }
     </script>
 @endsection
