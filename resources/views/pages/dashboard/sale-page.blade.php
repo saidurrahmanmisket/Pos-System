@@ -384,12 +384,12 @@
                     if (response.status == 'success') {
                         hideLoader();
                         // $('#customerList').empty();
-                        console.log(response);
+                        // console.log(response);
                         response.data.forEach(function(item, index) {
                             let row = `<tr>
                                         <td class="col-10">${item['name']}</td>
                                         <td>
-                                            <button data-id="${item['id']}" class="customerPick float-end btn m-0  bg-gradient-primary">Pick</button>
+                                            <button onClick="pickCustomer(this)"  data-id="${item['id']}" data-name="${item['name']}" data-email="${item['email']}" data-mobile="${item['mobile']}" data-user_id="${item['user_id']}" class="customerPick float-end btn m-0  bg-gradient-primary">Pick</button>
                                         </td>
                                     </tr>`
                             $('#customerList').append(row)
@@ -516,11 +516,29 @@
                     $('#payable').text((payableTotal - calculateDiscountPercent).toFixed(2));
 
                     invoiceList.append(row)
+                    successToast("Product Added")
+
 
                 }
 
             }
 
+        }
+        function discount(){
+            
+        }
+        function pickCustomer(button) {
+            //get data and store
+            let id = $(button).data('id');
+            let name = $(button).data('name');
+            let email = $(button).data('email');
+            let mobile = $(button).data('mobile');
+            let user_id = $(button).data('user_id');
+            // set data 
+            let customerName = $('#CName').text(name);
+            let customerEmail = $('#CEmail').text(email);
+            let customerId = $('#CId').text(user_id);
+            successToast("Customer Added");
         }
 
         function deleteProduct(button) {
@@ -537,7 +555,7 @@
             let payableTotal = calculateVAtPercent + grandTotal;
 
             let calculateDiscountPercent = (discountPercent / 100) * payableTotal;
-            
+
             $('#payable').text((payableTotal - calculateDiscountPercent).toFixed(2));
 
         }
