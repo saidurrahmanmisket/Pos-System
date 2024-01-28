@@ -41,16 +41,16 @@
                             <p class="text-bold text-xs my-1 text-dark"> TOTAL: <i class="bi bi-currency-dollar"></i> <span
                                     id="total">0</span></p>
                             <p class="text-bold text-xs my-2 text-dark"> PAYABLE: <i class="bi bi-currency-dollar"></i>
-                                <span id="payable"></span>
+                                <span id="payable">0</span>
                             </p>
                             <p class="text-bold text-xs my-1 text-dark"> VAT(5%): <i class="bi bi-currency-dollar"></i>
-                                <span id="vat"></span>
+                                <span id="vat">0</span>
                             </p>
                             <p class="text-bold text-xs my-1 text-dark"> Discount: <i class="bi bi-currency-dollar"></i>
-                                <span id="discount"></span>
+                                <span id="discount">0</span>
                             </p>
                             <span class="text-xxs">Discount(%):</span>
-                            <input value="0" class="form-control w-40 " id="discountP" />
+                            <input onkeyup="discount()" value="0" min="0" type="number" class="form-control w-40 " id="discountP" />
                             <p>
                                 <button onclick="createInvoice()"
                                     class="btn  my-3 bg-gradient-primary w-40">Confirm</button>
@@ -425,7 +425,7 @@
                                         <td class="col-10">${item['name']}</td>
 
                                         <td>
-                                            <button data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}" 
+                                            <button onClick="addProductModel(this)" data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}" 
                                             class="float-end btn m-0  bg-gradient-primary addProduct">Add</button>
                                             
                                             
@@ -444,19 +444,11 @@
                             lengthMenu: [5, 10, 15, 20, 30]
                         });
 
-                        $('.addProduct').on('click', function() {
+                        // $('.addProduct').on('click', function() {
 
 
-                            $('#create-modal').modal('show');
 
-                            let id = $(this).data('id');
-                            let name = $(this).data('name');
-                            let price = $(this).data('price');
-                            $('#PId').val(id);
-                            $('#PName').val(name);
-                            $('#PPrice').val(price);
-                            $('#PQty').val(1);
-                        })
+                        // })
                     }
                 }
 
@@ -465,6 +457,18 @@
         }
 
         productList();
+        function addProductModel(button) {
+            $('#create-modal').modal('show');
+
+            let id = $(button).data('id');
+            let name = $(button).data('name');
+            let price = $(button).data('price');
+            $('#PId').val(id);
+            $('#PName').val(name);
+            $('#PPrice').val(price);
+            $('#PQty').val(1);
+        }
+        
 
         function pickProduct() {
             let id = $('#PId').val();
@@ -496,13 +500,12 @@
                     let grandTotal = parseFloat($('#total').text());
                     let vat = parseFloat($('#vat').text());
                     let discount = parseFloat($('#discount').text());
-                    let discountPercent = parseFloat($('#discountP').val());
 
                     /*
                          fristly calculate the total price of all products
                          then calculate vat 
                          then discount the percentage
-                    */
+                         */
                     grandTotal += total;
                     $('#total').text(grandTotal);
 
@@ -511,21 +514,42 @@
 
                     let payableTotal = calculateVAtPercent + grandTotal;
 
-                    let calculateDiscountPercent = (discountPercent / 100) * payableTotal;
 
-                    $('#payable').text((payableTotal - calculateDiscountPercent).toFixed(2));
 
-                    invoiceList.append(row)
+                    $('#payable').text((payableTotal).toFixed(2));
+
+                    invoiceList.append(row);
                     successToast("Product Added")
 
 
                 }
 
             }
+            discount()
 
         }
-        function discount(){
+
+        function discount() {
+            let total = parseFloat($('#total').text());
+            let calculateVat = (5 / 100)*total;
+
+            parseFloat($('#vat').text(calculateVat.toFixed(2)));
+
+            let vat = parseFloat($('#vat').text());
+
+            parseFloat($('#payable').text(total + vat));
             
+            let payable = parseFloat($('#payable').text());
+            let discount = parseFloat($('#discountP').val());
+            if(isNaN(discount)){
+                errorToast("Discount can't be Empty")
+            }
+            
+            let calculateDiscount = (discount / 100)*total
+            parseFloat($('#discount').text(calculateDiscount.toFixed(2)));
+            let finalAmount = payable - calculateDiscount ;
+            parseFloat($('#payable').text(finalAmount.toFixed(2)));
+            console.log(payable- calculateDiscount)
         }
         function pickCustomer(button) {
             //get data and store
