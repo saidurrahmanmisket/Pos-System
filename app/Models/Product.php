@@ -16,4 +16,13 @@ class Product extends Model
         'unit',
         'img_url',
     ];
+    public function user() {
+        return $this->belongsTo(Users::class);
+    }
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
+    public function invoiceProducts() {
+        return $this->hasMany(InvoiceProduct::class);
+    }
 }

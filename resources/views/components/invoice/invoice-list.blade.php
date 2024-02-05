@@ -88,3 +88,67 @@
 
     }
 </script> --}}
+ 
+<script>
+    //showing customer data
+    function invoiceList() {
+        var tableData = $('#tableData');
+        var tableList = $('#tableList');
+        tableData.DataTable().destroy();
+        tableList.empty();
+        showLoader();
+        $.ajax({
+            type: "get",
+            url: "/invoice-select",
+            success: function(response) {
+                if (response.status == '200') {
+                    hideLoader();
+                    console.log(response.data)
+                    response.data.forEach(function(item, index) {
+                        let row = `<tr>
+                                        <td>${index + 1}</td>
+                                        <td>${item.customer['name']}</td>
+                                        <td>${item.customer['mobile']}</td>
+                                        <td>${item['total']}</td>
+                                        <td>${item['vat']}</td>
+                                        <td>${item['discount']}</td>
+                                        <td>${item['payable']}</td>
+                                        <td>
+                                            <button data-id="${item['id']}" data-customer_id="${item.customer['id']}" class="btn viewBtn btn-sm btn-outline-success">view</button>
+                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                        </td>
+                                    </tr>`
+                        $('#tableList').append(row)
+                    });
+
+                    //click event of edit and delete customer and set value 
+                    $('.viewBtn').on('click', function() {
+                        let invoice_id = $(this).data('id');
+                        let customer_id = $(this).data('customer_id');
+                        console.log(invoice_id, customer_id)
+                        // $("#details-modal").modal('show');
+                        InvoiceDetails(customer_id, invoice_id)
+                        
+                    })
+
+                    $('.deleteBtn').on('click', function() {
+                        let id = $(this).data('id');
+                        $("#delete-modal").modal('show');
+                        $("#deleteID").val(id);
+                    })
+                    
+                    tableData.DataTable({
+                        order: [
+                            [0, 'asc']
+                        ],
+                        lengthMenu: [5, 10, 15, 20, 30]
+                    });
+                };
+            }
+        })
+    }
+    invoiceList();
+
+    
+
+</script>

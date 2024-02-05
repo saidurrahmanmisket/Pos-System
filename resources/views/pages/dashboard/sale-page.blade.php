@@ -9,7 +9,7 @@
                             <span class="text-bold text-dark">BILLED TO </span>
                             <p class="text-xs mx-0 my-1">Name: <span id="CName"></span> </p>
                             <p class="text-xs mx-0 my-1">Email: <span id="CEmail"></span></p>
-                            <p class="text-xs mx-0 my-1">User ID: <span id="CId"></span> </p>
+                            <p class="text-xs mx-0 my-1 d-none">Customer ID: <span id="CId"></span> </p>
                         </div>
                         <div class="col-4">
                             <img class="w-50" src="{{ 'images/logo.png' }}">
@@ -50,7 +50,8 @@
                                 <span id="discount">0</span>
                             </p>
                             <span class="text-xxs">Discount(%):</span>
-                            <input onkeyup="discount()" value="0" min="0" type="number" class="form-control w-40 " id="discountP" />
+                            <input onkeyup="discount()" value="0" min="0" type="number"
+                                class="form-control w-40 " id="discountP" />
                             <p>
                                 <button onclick="createInvoice()"
                                     class="btn  my-3 bg-gradient-primary w-40">Confirm</button>
@@ -457,6 +458,7 @@
         }
 
         productList();
+
         function addProductModel(button) {
             $('#create-modal').modal('show');
 
@@ -468,7 +470,7 @@
             $('#PPrice').val(price);
             $('#PQty').val(1);
         }
-        
+
 
         function pickProduct() {
             let id = $('#PId').val();
@@ -477,7 +479,10 @@
             let quantity = $('#PQty').val();
             if (quantity <= 0) {
                 errorToast("Quantity Can't be 0")
-            } else {
+            }else if(price <=0){
+                errorToast("Price Can't be 0")
+            }
+             else {
 
                 let total = price * quantity;
 
@@ -531,26 +536,27 @@
 
         function discount() {
             let total = parseFloat($('#total').text());
-            let calculateVat = (5 / 100)*total;
+            let calculateVat = (5 / 100) * total;
 
             parseFloat($('#vat').text(calculateVat.toFixed(2)));
 
             let vat = parseFloat($('#vat').text());
 
             parseFloat($('#payable').text(total + vat));
-            
+
             let payable = parseFloat($('#payable').text());
             let discount = parseFloat($('#discountP').val());
-            if(isNaN(discount)){
+            if (isNaN(discount)) {
                 errorToast("Discount can't be Empty")
             }
-            
-            let calculateDiscount = (discount / 100)*total
+
+            let calculateDiscount = (discount / 100) * total
             parseFloat($('#discount').text(calculateDiscount.toFixed(2)));
-            let finalAmount = payable - calculateDiscount ;
+            let finalAmount = payable - calculateDiscount;
             parseFloat($('#payable').text(finalAmount.toFixed(2)));
-            console.log(payable- calculateDiscount)
+            console.log(payable - calculateDiscount)
         }
+
         function pickCustomer(button) {
             //get data and store
             let id = $(button).data('id');
@@ -561,27 +567,94 @@
             // set data 
             let customerName = $('#CName').text(name);
             let customerEmail = $('#CEmail').text(email);
-            let customerId = $('#CId').text(user_id);
+            let customerId = $('#CId').text(id);
             successToast("Customer Added");
         }
 
         function deleteProduct(button) {
-            $(button).closest('tr').remove();
-            console.log("reomove");
+            //subtrac from total
             let total = $(button).data('total');
             let grandTotal = parseFloat($('#total').text());
             grandTotal -= total;
             $('#total').text(grandTotal);
 
+            //calculate all 
             let calculateVAtPercent = (5 / 100) * grandTotal; //5% vat
             $('#vat').text(calculateVAtPercent.toFixed(2));
 
             let payableTotal = calculateVAtPercent + grandTotal;
 
-            let calculateDiscountPercent = (discountPercent / 100) * payableTotal;
 
-            $('#payable').text((payableTotal - calculateDiscountPercent).toFixed(2));
 
+            $('#payable').text((payableTotal).toFixed(2));
+            discount()
+
+            $(button).closest('tr').remove();
+        }
+
+        function createInvoice() {
+
+            let total = $('#total').text();
+            console.log(total)
+            let discount = $('#discount').text();
+            let vat = $('#vat').text();
+            let payable = $('#payable').text();
+            let customerId = $('#CId').text();
+            let products = $('#invoiceList').find('tr').length;
+
+            if(!customerId){
+                errorToast("Customer is Empty");
+            }
+            else if (products <= 0) {
+                errorToast("Please Add Some Products");
+            } else {
+                let productList = [];
+                $('#invoiceList').find('tr').each(function() {
+
+                    let product_id = $(this).data('id');
+                    let qty = $(this).find('td:nth-child(2)').text();
+                    let sale_price = $(this).find('td:nth-child(3)').text();
+
+                    productList.push({ 'product_id': product_id, 'qty': qty, 'sale_price': sale_price })
+                })
+                if (!total) {
+                errorToast("Total is Empty");
+            } else if (!discount) {
+                errorToast("Discount is Empty");
+            } else if (!vat) {
+                errorToast("Vat is Empty");
+            } else if (!payable) {
+                errorToast("Payable is Empty");
+            } else {
+
+                showLoader()
+                $.ajax({
+                    type: "Post",
+                    url: "/invoice-create",
+                    data: {
+                        total: total,
+                        discount: discount,
+                        vat: vat,
+                        payable: payable,
+                        customerId: customerId,
+                        products: productList
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.status == '200') {
+                            successToast(response.message);
+                            hideLoader();
+                            window.location.href = '/invoicePage';
+                        } else {
+                            errorToast(response.message);
+                            hideLoader();
+                        }
+                    }
+                })
+            }
+            }
+
+            
         }
     </script>
 @endsection

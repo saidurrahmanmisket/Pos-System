@@ -8,6 +8,7 @@ use App\Models\InvoiceProduct;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class InvoiceController extends Controller
 {
@@ -25,17 +26,26 @@ class InvoiceController extends Controller
     //Api routes
     function invoiceCreate(Request $request)
     {
-        // DB::beginTransaction();
         try {
+            $request->validate([
+                'total' => 'required',
+                'vat' => 'required',
+                'discount' => 'required',
+                'payable' => 'required',
+                'customerId' => 'required',
+                'products' => 'required'
+
+            ]);
             $userID = $request->header('id');
 
-            $total = $request->json('total');
+            $total = $request->total;
             // $total = $request->total;
-            $vat = $request->json('vat');
-            $discount = $request->json('discount');
-            $payable = $request->json('payable');
-            $customerId = $request->json('customer_id');
-
+            $vat = $request->vat;
+            $discount = $request->discount;
+            $payable = $request->payable;
+            $customerId = $request->customerId;
+            // dd($request);
+            DB::beginTransaction();
             $invoice = Invoice::create([
                 'total' => $total,
                 'discount' => $discount,
@@ -46,17 +56,8 @@ class InvoiceController extends Controller
             ]);
 
             $invoiceId = $invoice->id;
-            $products = $request->json('products');
+            $products = $request->products;
 
-            // foreach ($products as $product) {
-            //     InvoiceProduct::create([
-            //         'invoice_id' => $invoiceId,
-            //         'product_id' => $product['product_id'],
-            //         'qty' => $product['qty'],
-            //         'user_id' => $userID,
-            //         'sale_price' => $product['sale_price']
-            //     ]);
-            // }
 
             $invoiceProducts = [];
 
@@ -81,56 +82,63 @@ class InvoiceController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 500,
-                'message' => $e->getMessage()
+                'message' => 'Somthing went wrong',
+                'error' => $e->getMessage()
             ]);
         }
     }
 
     function invoiceSelect(Request $request)
-{
-    try {
-        $userID = $request->header('id');
-        $data = Invoice::where('user_id', $userID)
-        ->with('customer')    
-        ->get();
-        if (!$data) {
+    {
+        try {
+            $userID = $request->header('id');
+            $data = Invoice::where('user_id', $userID)
+                ->with('customer')
+                ->get();
+            if (!$data) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'data not found'
+                ]);
+            }
             return response()->json([
-                'status' => 404,
-                'message' => 'data not found'
+                'status' => 200,
+                'data' => $data,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
             ]);
         }
-        return response()->json([
-            'status' => 200,
-            'data' => $data,
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 500,
-            'message' => $e->getMessage()
-        ]);
     }
-}
 
 
     function invoiceDetails(Request $request)
     {
         try {
             $userID = $request->header('id');
-            $customerId = $request->input('customer_id');
-            $invoiceId = $request->input('invoice_id');
+            $customerId = $request->customer_id;
+            $invoiceId = $request->invoice_id;
 
             $customer = Customer::where('user_id', $userID)
+            ->select('id', 'name', 'email', 'created_at')
                 ->where('id', $customerId)
                 ->first();
 
             $invoice = Invoice::where('user_id', $userID)
+                ->select('id', 'total', 'vat', 'discount', 'payable')
                 ->where('id', $invoiceId)
                 ->first();
-            $invoiceProducts = InvoiceProduct::where('user_id', $userID)
+            $invoiceProducts = InvoiceProduct::with(['product:id,name'])
+                ->where('user_id', $userID)
                 ->where('invoice_id', $invoiceId)
+                ->select('id', 'product_id','sale_price', 'qty')
                 ->get();
 
-            
+
+
+
             return response()->json([
                 'status' => 200,
                 'customer' => $customer,
@@ -140,7 +148,8 @@ class InvoiceController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => $e->getMessage()
+                'message' => "Somthing Went wrong",
+                'error' => $e->getMessage()
             ]);
         }
     }

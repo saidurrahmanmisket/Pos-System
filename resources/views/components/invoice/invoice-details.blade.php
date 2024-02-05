@@ -14,7 +14,7 @@
                                 <span class="text-bold text-dark">BILLED TO </span>
                                 <p class="text-xs mx-0 my-1">Name:  <span id="CName"></span> </p>
                                 <p class="text-xs mx-0 my-1">Email:  <span id="CEmail"></span></p>
-                                <p class="text-xs mx-0 my-1">User ID:  <span id="CId"></span> </p>
+                                {{-- <p class="text-xs mx-0 my-1">Customer ID:  <span id="CId"></span> </p> --}}
                             </div>
                             <div class="col-4">
                                 <img class="w-40" src="{{"images/logo.png"}}">
@@ -107,3 +107,48 @@
         }, 1000);
     }
 </script> --}}
+
+<script>
+    function InvoiceDetails(customer_id, invoice_id) {
+
+        showLoader();
+        $.ajax({
+            type: "get",
+            url: "/invoice-details",
+            data: {
+                "customer_id": customer_id,
+                "invoice_id": invoice_id
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.status == '200') {
+                    hideLoader();
+
+                   $('#CName').text(response.customer['name']);
+                   $('#CEmail').text(response.customer['email']);
+                   $('#total').text(response.invoice['total']);
+                   $('#payable').text(response.invoice['payable']);
+                   $('#vat').text(response.invoice['vat']);
+                   $('#discount').text(response.invoice['discount']);
+
+                   $('#invoiceList').empty();
+                   response.invoiceProducts.forEach(function(item,index){
+
+                    let row=`<tr class="text-xs">
+                                <td>${item['product']['name']}</td>
+                                <td>${item['qty']}</td>
+                                <td>${item['sale_price']}</td>
+                             </tr>`
+                    $('#invoiceList').append(row)
+
+                   })
+
+                    $("#details-modal").modal("show");
+                } else {
+                //     // hideLoader();
+                    errorToast(response.message);
+                }
+            }
+        })
+    }
+</script>
