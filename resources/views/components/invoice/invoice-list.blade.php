@@ -139,7 +139,7 @@
                     
                     tableData.DataTable({
                         order: [
-                            [0, 'asc']
+                            [0, 'desc']
                         ],
                         lengthMenu: [5, 10, 15, 20, 30]
                     });

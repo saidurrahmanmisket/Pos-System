@@ -15,20 +15,29 @@
         </div>
     </div>
 </div>
+<script>
+    function itemDelete(){
+        let id = $('#deleteID').val();
+        showLoader()
+        $.ajax({
+            type: "post",
+            url: "/invoice-delete",
+            data: {
+                id: id,
 
-{{-- <script>
-     async  function  itemDelete(){
-            let id=document.getElementById('deleteID').value;
-            document.getElementById('delete-modal-close').click();
-            showLoader();
-            let res=await axios.post("/invoice-delete",{inv_id:id})
-            hideLoader();
-            if(res.data===1){
-                successToast("Request completed")
-                await getList();
+            },
+            success: function(response) {
+                if (response.status == '200') {
+                    successToast(response.message);
+                    hideLoader();
+                    $("#delete-modal").modal('hide');
+                    invoiceList()
+                    getList();
+                } else {
+                    errorToast(response.message);
+                    hideLoader();
+                }
             }
-            else{
-                errorToast("Request fail!")
-            }
-     }
-</script> --}}
+        })
+    }
+</script>
