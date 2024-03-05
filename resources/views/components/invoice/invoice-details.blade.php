@@ -60,53 +60,7 @@
 </div>
 
 
-{{-- <script>
 
-
-    async function InvoiceDetails(cus_id,inv_id) {
-
-        showLoader()
-        let res=await axios.post("/invoice-details",{cus_id:cus_id,inv_id:inv_id})
-        hideLoader();
-
-        document.getElementById('CName').innerText=res.data['customer']['name']
-        document.getElementById('CId').innerText=res.data['customer']['user_id']
-        document.getElementById('CEmail').innerText=res.data['customer']['email']
-        document.getElementById('total').innerText=res.data['invoice']['total']
-        document.getElementById('payable').innerText=res.data['invoice']['payable']
-        document.getElementById('vat').innerText=res.data['invoice']['vat']
-        document.getElementById('discount').innerText=res.data['invoice']['discount']
-
-
-        let invoiceList=$('#invoiceList');
-
-        invoiceList.empty();
-
-        res.data['product'].forEach(function (item,index) {
-            let row=`<tr class="text-xs">
-                        <td>${item['product']['name']}</td>
-                        <td>${item['qty']}</td>
-                        <td>${item['sale_price']}</td>
-                     </tr>`
-            invoiceList.append(row)
-        });
-
-
-
-        $("#details-modal").modal('show')
-    }
-
-    function PrintPage() {
-        let printContents = document.getElementById('invoice').innerHTML;
-        let originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        setTimeout(function() {
-            location.reload();
-        }, 1000);
-    }
-</script> --}}
 
 <script>
     function InvoiceDetails(customer_id, invoice_id) {

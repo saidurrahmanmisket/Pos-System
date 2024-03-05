@@ -32,62 +32,6 @@
         </div>
     </div>
 </div>
-{{-- 
-<script>
-    getList();
-
-
-    async function getList() {
-
-
-        showLoader();
-        let res = await axios.get("/invoice-select");
-        hideLoader();
-
-        let tableList = $("#tableList");
-        let tableData = $("#tableData");
-
-        tableData.DataTable().destroy();
-        tableList.empty();
-
-        res.data.forEach(function(item, index) {
-            let row = `<tr>
-                    <td>${index+1}</td>
-                    <td>${item['customer']['name']}</td>
-                    <td>${item['customer']['mobile']}</td>
-                    <td>${item['total']}</td>
-                    <td>${item['vat']}</td>
-                    <td>${item['discount']}</td>
-                    <td>${item['payable']}</td>
-                    <td>
-                        <button data-id="${item['id']}" data-cus="${item['customer']['id']}" class="viewBtn btn btn-outline-dark text-sm px-3 py-1 btn-sm m-0"><i class="fa text-sm fa-eye"></i></button>
-                        <button data-id="${item['id']}" data-cus="${item['customer']['id']}" class="deleteBtn btn btn-outline-dark text-sm px-3 py-1 btn-sm m-0"><i class="fa text-sm  fa-trash-alt"></i></button>
-                    </td>
-                 </tr>`
-            tableList.append(row)
-        })
-
-        $('.viewBtn').on('click', async function() {
-            let id = $(this).data('id');
-            let cus = $(this).data('cus');
-            await InvoiceDetails(cus, id)
-        })
-
-        $('.deleteBtn').on('click', function() {
-            let id = $(this).data('id');
-            document.getElementById('deleteID').value = id;
-            $("#delete-modal").modal('show');
-        })
-
-        new DataTable('#tableData', {
-            order: [
-                [0, 'desc']
-            ],
-            lengthMenu: [5, 10, 15, 20, 30]
-        });
-
-    }
-</script> --}}
  
 <script>
     //showing customer data

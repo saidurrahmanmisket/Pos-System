@@ -102,10 +102,11 @@ class UserController extends Controller
 
     function userVerifyOTP(Request $request)
     {
-        $email = $request->input('email');
+        $email = $request->email;
         $otp = $request->input('otp');
         $count = User::where('email', '=', $email)->where('otp', '=', $otp)->count();
-
+        // dd($email, $otp, $count);
+        // dd($count);
         if ($count == 1) {
             //pass rest token issue
             $token  = JWTToken::createTokenForSetPassword($request->input('email'));
