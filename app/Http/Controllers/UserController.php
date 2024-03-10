@@ -167,10 +167,13 @@ class UserController extends Controller
         $firstName = $request->input('firstName');
         $lastName = $request->input('lastName');
         $mobile = $request->input('mobile');
+        $password = $request->input('password');
         $user = User::where('email', '=', $email)->first();
         $user->firstName = $firstName;
         $user->lastName = $lastName;
         $user->mobile = $mobile;
+        $user->mobile = $mobile;
+        $user->password = $password;
         $user->save();
         return response()->json([
             'status' => 'success',
