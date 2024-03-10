@@ -248,10 +248,9 @@
             let quantity = $('#PQty').val();
             if (quantity <= 0) {
                 errorToast("Quantity Can't be 0")
-            }else if(price <=0){
+            } else if (price <= 0) {
                 errorToast("Price Can't be 0")
-            }
-             else {
+            } else {
 
                 let total = price * quantity;
 
@@ -316,7 +315,8 @@
             let payable = parseFloat($('#payable').text());
             let discount = parseFloat($('#discountP').val());
             if (isNaN(discount)) {
-                errorToast("Discount can't be Empty")
+                errorToast("Discount can't be Empty");
+                discount = 0;
             }
 
             let calculateDiscount = (discount / 100) * total
@@ -371,10 +371,9 @@
             let customerId = $('#CId').text();
             let products = $('#invoiceList').find('tr').length;
 
-            if(!customerId){
+            if (!customerId) {
                 errorToast("Customer is Empty");
-            }
-            else if (products <= 0) {
+            } else if (products <= 0) {
                 errorToast("Please Add Some Products");
             } else {
                 let productList = [];
@@ -384,46 +383,50 @@
                     let qty = $(this).find('td:nth-child(2)').text();
                     let sale_price = $(this).find('td:nth-child(3)').text();
 
-                    productList.push({ 'product_id': product_id, 'qty': qty, 'sale_price': sale_price })
+                    productList.push({
+                        'product_id': product_id,
+                        'qty': qty,
+                        'sale_price': sale_price
+                    })
                 })
                 if (!total) {
-                errorToast("Total is Empty");
-            } else if (!discount) {
-                errorToast("Discount is Empty");
-            } else if (!vat) {
-                errorToast("Vat is Empty");
-            } else if (!payable) {
-                errorToast("Payable is Empty");
-            } else {
+                    errorToast("Total is Empty");
+                } else if (!discount) {
+                    errorToast("Discount is Empty");
+                } else if (!vat) {
+                    errorToast("Vat is Empty");
+                } else if (!payable) {
+                    errorToast("Payable is Empty");
+                } else {
 
-                showLoader()
-                $.ajax({
-                    type: "Post",
-                    url: "/invoice-create",
-                    data: {
-                        total: total,
-                        discount: discount,
-                        vat: vat,
-                        payable: payable,
-                        customerId: customerId,
-                        products: productList
-                    },
-                    success: function(response) {
-                        console.log(response)
-                        if (response.status == '200') {
-                            successToast(response.message);
-                            hideLoader();
-                            window.location.href = '/invoicePage';
-                        } else {
-                            errorToast(response.message);
-                            hideLoader();
+                    showLoader()
+                    $.ajax({
+                        type: "Post",
+                        url: "/invoice-create",
+                        data: {
+                            total: total,
+                            discount: discount,
+                            vat: vat,
+                            payable: payable,
+                            customerId: customerId,
+                            products: productList
+                        },
+                        success: function(response) {
+                            console.log(response)
+                            if (response.status == '200') {
+                                successToast(response.message);
+                                hideLoader();
+                                window.location.href = '/invoicePage';
+                            } else {
+                                errorToast(response.message);
+                                hideLoader();
+                            }
                         }
-                    }
-                })
-            }
+                    })
+                }
             }
 
-            
+
         }
     </script>
 @endsection

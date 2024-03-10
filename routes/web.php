@@ -74,6 +74,8 @@ Route::get('/invoice-details', [InvoiceController::class, 'invoiceDetails'])->mi
 Route::get('/invoice-list', [InvoiceController::class, 'invoiceList'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/invoice-update', [InvoiceController::class, 'invoiceUpdate'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/invoice-by-id', [InvoiceController::class, 'invoiceById'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/invoice-download', [ReportController::class, 'salesReport'])->middleware([TokenVerificationMiddleware::class]);
+
 
 //Report route
 Route::get('/sales-report/{fromDate}/{toDate}/{download}', [ReportController::class, 'salesReport'])->middleware([TokenVerificationMiddleware::class]);
