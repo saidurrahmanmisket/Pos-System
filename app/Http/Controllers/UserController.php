@@ -67,7 +67,8 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'User login failed'
+                'message' => 'User login failed',
+                'error' => $e->getMessage()
             ]);
         }
     }
