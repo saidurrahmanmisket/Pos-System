@@ -24,11 +24,7 @@
                                 <label>Mobile Number</label>
                                 <input id="mobile" placeholder="Mobile" class="form-control" type="mobile" />
                             </div>
-                            <div class="col-md-4 p-2">
-                                <label>Password</label>
-                                <input id="password" placeholder="User Password" class="form-control"
-                                    type="password" />
-                            </div>
+                            
                         </div>
                         <div class="row m-0 p-0">
                             <div class="col-md-4 p-2">
@@ -58,7 +54,6 @@
                 $("#firstName").val(data.user.firstName);
                 $("#lastName").val(data.user.lastName);
                 $("#mobile").val(data.user.mobile);
-                $("#password").val(data.user.password);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
@@ -72,7 +67,6 @@
         var firstName = $("#firstName").val();
         var lastName = $("#lastName").val();
         var mobile = $("#mobile").val();
-        var password = $("#password").val();
 
         if(firstName.length===0){
             alert("Please enter first name");
@@ -86,10 +80,7 @@
             alert("Please enter mobile number");
             return false;
         }
-        if(password.length===0){
-            alert("Please enter password");
-            return false;
-        }
+        
        
         showLoader();
         $.ajax({
@@ -102,11 +93,13 @@
                 firstName: firstName,
                 lastName: lastName,
                 mobile: mobile,
-                password: password
             }),
             success: function(data) {
                 if(data.status==="success"){
                     successToast(data.message);
+                }
+                else{
+                    errorToast(data.message);
                 }
                 hideLoader();
             },

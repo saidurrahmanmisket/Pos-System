@@ -8,12 +8,28 @@ use App\Mail\UserOTP;
 use App\Models\Users;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function userRegistration(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
+            'mobile' => 'required|numeric',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()->first(),
+            ]);
+        }
         try {
             // checking already exist 
             $email = $request->input('email');
@@ -29,7 +45,7 @@ class UserController extends Controller
                 'lastName' => $request->input('lastName'),
                 'mobile' => $request->input('mobile'),
                 'email' => $request->input('email'),
-                'password' => $request->input('password'),
+                'password' => Hash::make($request->input('password')),
             ]);
 
             return response()->json([
@@ -47,13 +63,24 @@ class UserController extends Controller
     }
     public function userLogin(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()->first(),
+            ]);
+        }
         try {
 
-            $count = User::where('email', '=', $request->input('email'))
-                ->where('password', '=', $request->input('password'))->select('id')->first();
+            $user = User::where('email', '=', $request->input('email'))->first();
 
-            if ($count != null) {
-                $token  = JWTToken::createToken($request->input('email'), $count->id);
+            if ($user && Hash::check($request->input('password'), $user->password)) {
+                $token  = JWTToken::createToken($request->input('email'), $user->id);
                 return response()->json([
                     'status' => 'success',
                     'message' => 'User Login successfully'
@@ -67,7 +94,7 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'User login failed',
+                'message' => 'Somthing went wrong',
                 'error' => $e->getMessage()
             ]);
         }
@@ -79,54 +106,112 @@ class UserController extends Controller
 
     function userSentOTP(Request $request)
     {
+        $validator = Validator::make($request->all(), [
 
-        $email = $request->input('email');
-        $otp = rand(1000, 9999);
-        $count = User::where('email', '=', $email)->count();
+            'email' => 'required|email',
+        ]);
 
-        if ($count == 1) {
-            //sent otp to email
-            Mail::to($email)->send(new UserOTP($otp));
-            //store otp in database
-            User::where('email', '=', $email)->update(['otp' => $otp]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Otp Sent successfully',
-            ]);
-        } else {
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'User Not Found'
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+        try {
+
+            $email = $request->input('email');
+            $otp = rand(1000, 9999);
+            $count = User::where('email', '=', $email)->count();
+
+            if ($count == 1) {
+                //sent otp to email
+                Mail::to($email)->send(new UserOTP($otp));
+                //store otp in database
+                User::where('email', '=', $email)->update(['otp' => $otp]);
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Otp Sent successfully',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'User Not Found'
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Somthing went wrong',
+                'error' => $e->getMessage()
             ]);
         }
     }
 
     function userVerifyOTP(Request $request)
     {
-        $email = $request->email;
-        $otp = $request->input('otp');
-        $count = User::where('email', '=', $email)->where('otp', '=', $otp)->count();
-        // dd($email, $otp, $count);
-        // dd($count);
-        if ($count == 1) {
-            //pass rest token issue
-            $token  = JWTToken::createTokenForSetPassword($request->input('email'));
-            //update otp
-            User::where('email', '=', $email)->update(['otp' => '0']);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'User Login successfully'
-            ])->cookie('token', $token);
-        } else {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email',
+            'otp' => 'required|min:4|max:4',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Email or OTP Not Match'
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
+        try {
+
+            $email = $request->email;
+            $otp = $request->input('otp');
+            $user = User::where('email', '=', $email)->where('otp', '=', $otp)->first();
+
+            if ($user == null) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Email or OTP Not Match'
+                ]);
+            }
+
+            if ($user) {
+                //pass rest token issue
+                $token  = JWTToken::createToken($request->input('email'), $user->id);
+                //update otp
+                User::where('email', '=', $email)->update(['otp' => '0']);
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'User Login successfully'
+                ])->cookie('token', $token);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Email or OTP Not Match'
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Somthing went wrong',
+                'error' => $e->getMessage()
             ]);
         }
     }
 
     function restPassword(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
         try {
             $email = $request->header('email');
             if ($email == "Expired token") {
@@ -136,7 +221,7 @@ class UserController extends Controller
                 ]);
             }
 
-            $password = $request->input('password');
+            $password = Hash::make($request->input('password'));
             User::where('email', '=', $email)->update(['password' => $password]);
 
             return response()->json([
@@ -146,7 +231,8 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Something went wrong'
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
             ]);
         }
     }
@@ -163,17 +249,28 @@ class UserController extends Controller
     }
     function userUpdate(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email',
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
+            'mobile' => 'required|numeric|digits:11',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()->first(),
+            ]);
+        }
         $email = $request->input('email');
         $firstName = $request->input('firstName');
         $lastName = $request->input('lastName');
         $mobile = $request->input('mobile');
-        $password = $request->input('password');
         $user = User::where('email', '=', $email)->first();
         $user->firstName = $firstName;
         $user->lastName = $lastName;
         $user->mobile = $mobile;
-        $user->mobile = $mobile;
-        $user->password = $password;
         $user->save();
         return response()->json([
             'status' => 'success',
