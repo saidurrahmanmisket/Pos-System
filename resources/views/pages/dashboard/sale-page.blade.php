@@ -202,7 +202,7 @@
                                             </td>
                                             </tr>`;
                             // data-bs-toggle="modal" data-bs-target="#create-modal"
-                            // <button data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}"  class="btn productPick btn-sm btn-outline-success">Pick</button>
+                            // <button data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}"  class="btn productPick btn-sm bg-gradient-success">Pick</button>
 
                             productList.append(row)
 
@@ -260,7 +260,7 @@
                             <td>${quantity}</td>
                             <td>${total}</td>
                             <td class="col-1">
-                                <button data-total="${total}" onClick="deleteProduct(this)" class="btn  btn-sm btn-outline-danger">Remove</button>
+                                <button data-total="${total}" onClick="deleteProduct(this)" class="btn  btn-sm bg-gradient-danger">Remove</button>
                             </td>
                         </tr>`;
 

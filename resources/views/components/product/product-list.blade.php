@@ -33,8 +33,8 @@
                             <td>${item['price']}</td>
                             <td>${item['unit']}</td>
                             <td>
-                                <button data-id="${item['id']}" edit onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                                <button data-id="${item['id']}"  delete  data-bs-toggle="modal" data-bs-target="#delete-modal"  class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                <button data-id="${item['id']}" edit onclick="UpdateForm(${item['id']})" class="btn editBtn btn-sm bg-gradient-success">Edit</button>
+                                <button data-id="${item['id']}"  delete  data-bs-toggle="modal" data-bs-target="#delete-modal"  class="btn deleteBtn btn-sm bg-gradient-danger">Delete</button>
                             </td>
                         </tr> --}}
                     </tbody>
@@ -46,13 +46,11 @@
 
 
 <script>
-    
-
     function productList() {
         var tableData = $('#tableData');
-    var tableList = $('#tableList');
-    tableData.DataTable().destroy();
-    tableList.empty();
+        var tableList = $('#tableList');
+        tableData.DataTable().destroy();
+        tableList.empty();
 
         showLoader();
         $.ajax({
@@ -71,27 +69,27 @@
                                         <td>${item['price']}</td>
                                         <td>${item['unit']}</td>
                                         <td>
-                                            <button data-id="${item['id']}"  onclick="setFromValue(${item['id']})" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                                            <button data-id="${item['id']}" data-img_url="${item['img_url']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                            <button data-id="${item['id']}"  onclick="setFromValue(${item['id']})" class="btn editBtn btn-sm bg-gradient-success">Edit</button>
+                                            <button data-id="${item['id']}" data-img_url="${item['img_url']}" class="btn deleteBtn btn-sm bg-gradient-danger">Delete</button>
                                         </td>
                                     </tr>`;
 
                         tableList.append(row)
-                        
+
                     })
                     tableData.DataTable({
-                            order: [
-                                [0, 'desc']
-                            ],
-                            lengthMenu: [5, 10, 15, 20, 30]
-                        });
+                        order: [
+                            [0, 'desc']
+                        ],
+                        lengthMenu: [5, 10, 15, 20, 30]
+                    });
                     //set delete button id
                     // $('.editBtn').on('click', function() {
                     //     let id = $(this).data('id');
                     //     $("#update-modal").modal('show');
                     //     $("#deleteID").val(id);
                     //     $("#deleteFilePath").val(item['img_url'])
-                        
+
 
                     // })
                     $('.deleteBtn').on('click', function() {

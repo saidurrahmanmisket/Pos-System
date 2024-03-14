@@ -32,7 +32,7 @@
         </div>
     </div>
 </div>
- 
+
 <script>
     //showing customer data
     function invoiceList() {
@@ -58,8 +58,8 @@
                                         <td>${item['discount']}</td>
                                         <td>${item['payable']}</td>
                                         <td>
-                                            <button data-id="${item['id']}" data-customer_id="${item.customer['id']}" class="btn viewBtn btn-sm btn-outline-success">view</button>
-                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                            <button data-id="${item['id']}" data-customer_id="${item.customer['id']}" class="btn viewBtn btn-sm bg-gradient-success">view</button>
+                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm bg-gradient-danger">Delete</button>
                                         </td>
                                     </tr>`
                         $('#tableList').append(row)
@@ -72,7 +72,7 @@
                         console.log(invoice_id, customer_id)
                         // $("#details-modal").modal('show');
                         InvoiceDetails(customer_id, invoice_id)
-                        
+
                     })
 
                     $('.deleteBtn').on('click', function() {
@@ -80,7 +80,7 @@
                         $("#delete-modal").modal('show');
                         $("#deleteID").val(id);
                     })
-                    
+
                     tableData.DataTable({
                         order: [
                             [0, 'desc']
@@ -92,7 +92,4 @@
         })
     }
     invoiceList();
-
-    
-
 </script>

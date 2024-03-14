@@ -53,8 +53,8 @@
                                         <td>${item['email']}</td>
                                         <td>${item['mobile']}</td>
                                         <td>
-                                            <button data-id="${item['id']}" class="btn editBtn btn-sm btn-outline-success">Edit</button>
-                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm btn-outline-danger">Delete</button>
+                                            <button data-id="${item['id']}" class="btn editBtn btn-sm bg-gradient-success">Edit</button>
+                                            <button data-id="${item['id']}" class="btn deleteBtn btn-sm bg-gradient-danger">Delete</button>
                                         </td>
                                     </tr>`
                         $('#tableList').append(row)
@@ -72,7 +72,7 @@
                         $("#delete-modal").modal('show');
                         $("#deleteID").val(id);
                     })
-                    
+
                     tableData.DataTable({
                         order: [
                             [0, 'desc']
@@ -84,7 +84,4 @@
         })
     }
     getCustomersData();
-
-    
-
 </script>
