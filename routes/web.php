@@ -36,12 +36,12 @@ Route::get('/', function () {
 //user route
 Route::post('/user-registration', [UserController::class, 'userRegistration']);
 Route::post('/user-login', [UserController::class, 'userLogin']);
-Route::post('/send-otp', [UserController::class, 'userSentOTP']);
-Route::post('/verify-otp', [UserController::class, 'userVerifyOTP']);
-Route::post('/rest-password', [UserController::class, 'restPassword']);
+Route::post('/send-otp', [UserController::class, 'userSentOTP'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/verify-otp', [UserController::class, 'userVerifyOTP'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/rest-password', [UserController::class, 'restPassword'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/user-profile', [UserController::class, 'userProfile'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/user-update', [UserController::class, 'userUpdate'])->middleware([TokenVerificationMiddleware::class]);
-Route::get('/logout', [UserController::class, 'userLogOut']);
+Route::get('/logout', [UserController::class, 'userLogOut'])->middleware([TokenVerificationMiddleware::class]);
 
 //category route
 Route::post('/category-create', [CategoryController::class, 'CategoryCreate'])->middleware([TokenVerificationMiddleware::class]);
@@ -98,12 +98,12 @@ Route::get('/summary', [ReportController::class, 'summary'])->middleware([TokenV
 Route::get('/', [HomeController::class, 'HomePage']);
 Route::get('/userLogin', [UserController::class, 'LoginPage']);
 Route::get('/userRegistration', [UserController::class, 'RegistrationPage']);
-Route::get('/sendOtp', [UserController::class, 'SendOtpPage']);
-Route::get('/verifyOtp', [UserController::class, 'VerifyOTPPage']);
+Route::get('/sendOtp', [UserController::class, 'SendOtpPage'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/verifyOtp', [UserController::class, 'VerifyOTPPage'])->middleware([TokenVerificationMiddleware::class]);
 
 
 
-Route::get('/resetPassword', [UserController::class, 'ResetPasswordPage']);
+Route::get('/resetPassword', [UserController::class, 'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/categoryPage', [CategoryController::class, 'CategoryPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/dashboard', [DashboardController::class, 'DashboardPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/userProfile', [UserController::class, 'ProfilePage'])->middleware([TokenVerificationMiddleware::class]);
