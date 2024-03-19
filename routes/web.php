@@ -42,6 +42,8 @@ Route::post('/rest-password', [UserController::class, 'restPassword'])->middlewa
 Route::get('/user-profile', [UserController::class, 'userProfile'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/user-update', [UserController::class, 'userUpdate'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/logout', [UserController::class, 'userLogOut'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/user-name', [UserController::class, 'userName'])->middleware([TokenVerificationMiddleware::class]);
+
 
 //category route
 Route::post('/category-create', [CategoryController::class, 'CategoryCreate'])->middleware([TokenVerificationMiddleware::class]);

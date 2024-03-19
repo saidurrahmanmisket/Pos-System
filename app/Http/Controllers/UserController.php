@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Helper\JWTToken;
 use App\Mail\UserOTP;
+use App\Models\Customer;
 use App\Models\Users;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
@@ -276,6 +277,23 @@ class UserController extends Controller
             'status' => 'success',
             'message' => "Profile Update successful",
         ]);
+    }
+    function userName(Request $request)
+    {
+        try {
+            $user_id = $request->header('id');
+            $data = Customer::where('user_id', '=', $user_id)->select('id', 'name')->first();
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 
