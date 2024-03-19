@@ -281,7 +281,7 @@ class UserController extends Controller
     {
         try {
             $user_id = $request->header('id');
-            $data = User::where('id', '=', $user_id)->select('id', 'name')->first();
+            $data = User::where('id', '=', $user_id)->select('id', 'firstName', 'lastName')->first();
             return response()->json([
                 'status' => 'success',
                 'data' => $data
