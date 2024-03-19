@@ -26,9 +26,10 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome'); //for features implement
+// });
+
 
 // Api Routes Start from here ===========================================================================================================
 
@@ -97,7 +98,7 @@ Route::get('/summary', [ReportController::class, 'summary'])->middleware([TokenV
 
 // Page Routes start from here=====================================================================================================================
 
-Route::get('/', [HomeController::class, 'HomePage']);
+// Route::get('/', [HomeController::class, 'HomePage']);
 Route::get('/userLogin', [UserController::class, 'LoginPage']);
 Route::get('/userRegistration', [UserController::class, 'RegistrationPage']);
 Route::get('/sendOtp', [UserController::class, 'SendOtpPage'])->middleware([TokenVerificationMiddleware::class]);
@@ -105,6 +106,7 @@ Route::get('/verifyOtp', [UserController::class, 'VerifyOTPPage'])->middleware([
 
 
 
+Route::get('/', [DashboardController::class, 'DashboardPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/resetPassword', [UserController::class, 'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/categoryPage', [CategoryController::class, 'CategoryPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/dashboard', [DashboardController::class, 'DashboardPage'])->middleware([TokenVerificationMiddleware::class]);
