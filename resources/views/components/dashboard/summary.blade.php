@@ -179,11 +179,20 @@
         </div>
 
     </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-12 col-sm-12">
+
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 p-3">
+
+            <canvas id="myChart" style="width:100%;max-width:900px"></canvas>
+        </div>
+    </div>
 </div>
 
 
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> {{-- for pie chart --}}
 <script>
     getList();
 
@@ -193,7 +202,7 @@
             type: "get",
             url: "/summary",
             success: function(res) {
-                console.log(res.data['total'][0]);
+                // console.log(res.data['total'][0]);
                 hideLoader();
                 if (res.status == '200') {
                     $('#product').text((res.data['product']));
@@ -204,6 +213,55 @@
                     $('#vat').text(res.data['total'][0]['total_vat'].toFixed(2));
                     $('#payable').text(res.data['total'][0]['total_payable'].toFixed(2));
                     $('#discount').text(res.data['total'][0]['total_discount'].toFixed(2));
+
+
+
+                    var xValues = [];
+                    var yValues = [];
+                    console.log(res.data['topSellingProduct']);
+                    res.data['topSellingProduct'].forEach(products => {
+                        xValues.push(products.product.name);
+                        yValues.push(products.total_qty);
+                    });
+                    var barColors = [
+                        "#a260ff ",
+                        "#28025c",
+                        "#008DDA",
+                        "#41C9E2",
+                        "#824D74",
+                        "#FF8E8F",
+                        "#FFC700",
+                        "#F6995C",
+                        "#FF204E",
+                        "#ea0606",
+                    ];
+
+                    new Chart("myChart", {
+                        type: "doughnut",
+                        data: {
+                            labels: xValues,
+                            datasets: [{
+                                backgroundColor: barColors,
+                                data: yValues
+                            }],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+
+                            title: {
+                                display: true,
+                                text: "Top Selling Products",
+                                fontSize: 16,
+                                fontColor: "#111",
+                                position: 'bottom',
+
+                            },
+                            legend: {
+                                position: 'bottom',
+                            },
+                        }
+                    });
 
                 } else {
                     console.log(res);
@@ -216,5 +274,13 @@
                 errorToast('Something went wrong');
             }
         })
+        // }
+
+
+        // pieChart()
+
+        // function pieChart() {
+
+
     }
 </script>

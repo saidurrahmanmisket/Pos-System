@@ -5,9 +5,9 @@
                 <div class="card-body">
                     <h4>SIGN IN</h4>
                     <br />
-                    <input id="email" placeholder="User Email" class="form-control" type="email" />
+                    <input id="email" placeholder="User Email" class="form-control" type="email" value="admin@gmail.com" />
                     <br />
-                    <input id="password" placeholder="User Password" class="form-control" type="password" />
+                    <input id="password" placeholder="User Password" class="form-control" type="password" value="123456" />
                     <br />
                     <button onclick="SubmitLogin()" class="btn w-100 bg-gradient-primary">Next</button>
                     <hr />

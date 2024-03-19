@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\InvoiceProduct;
 use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -92,12 +93,21 @@ class ReportController extends Controller
                 DB::raw('SUM(payable) as total_payable')
             )
                 ->get();
+
+            $topSellingProduct = InvoiceProduct::with(['product:id,name'])->where('user_id', '=', $user_id)
+                ->select('product_id', DB::raw('SUM(qty) as total_qty'))
+                ->groupBy('product_id')
+                ->orderBy('total_qty', 'desc')
+                ->limit(10)
+                ->get();
+
             $data = [
                 'product' => $product,
                 'category' => $category,
                 'customer' => $customer,
                 'invoice' => $invoice,
-                'total' => $total
+                'total' => $total,
+                'topSellingProduct' => $topSellingProduct
             ];
             return response()->json([
                 'status' => 200,
