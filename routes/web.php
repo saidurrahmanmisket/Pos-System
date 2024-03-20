@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
 //user route
 Route::post('/user-registration', [UserController::class, 'userRegistration']);
 Route::post('/user-login', [UserController::class, 'userLogin']);
-Route::post('/send-otp', [UserController::class, 'userSentOTP'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/send-otp', [UserController::class, 'userSentOTP']);
 Route::post('/verify-otp', [UserController::class, 'userVerifyOTP'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/rest-password', [UserController::class, 'restPassword'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/user-profile', [UserController::class, 'userProfile'])->middleware([TokenVerificationMiddleware::class]);
@@ -101,7 +101,7 @@ Route::get('/summary', [ReportController::class, 'summary'])->middleware([TokenV
 // Route::get('/', [HomeController::class, 'HomePage']);
 Route::get('/userLogin', [UserController::class, 'LoginPage']);
 Route::get('/userRegistration', [UserController::class, 'RegistrationPage']);
-Route::get('/sendOtp', [UserController::class, 'SendOtpPage'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/sendOtp', [UserController::class, 'SendOtpPage']);
 Route::get('/verifyOtp', [UserController::class, 'VerifyOTPPage'])->middleware([TokenVerificationMiddleware::class]);
 
 
