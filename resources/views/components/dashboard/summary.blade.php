@@ -241,7 +241,7 @@
             var totalSell = [];
             res.data['sellByMonthThisYear'].forEach(data => {
                 month.push(data.month);
-                totalSell.push(data.total_collection);
+                totalSell.push(data.total_collection.toFixed());
             });
             // console.log(totalSell);
             new Chart($("#chart_day_sell"), {
