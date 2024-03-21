@@ -179,13 +179,13 @@
         </div>
 
     </div>
-    <div class="row">
+    <div class="row pt-5">
+        <div class="col-lg-6 col-md-12 col-sm-12">
+            <canvas id="chart_day_sell" style="width:100%;max-width:900px"></canvas>
+        </div>
         <div class="col-lg-6 col-md-12 col-sm-12">
 
-        </div>
-        <div class="col-lg-6 col-md-12 col-sm-12 p-3">
-
-            <canvas id="myChart" style="width:100%;max-width:900px"></canvas>
+            <canvas id="chart_top_sell" style="width:100%;max-width:900px"></canvas>
         </div>
     </div>
 </div>
@@ -215,53 +215,9 @@
                     $('#discount').text(res.data['total'][0]['total_discount'].toFixed(2));
 
 
+                    SellbyDay(res); //chart_day_sell
+                    topSellProduct(res); //chart_top_sell
 
-                    var xValues = [];
-                    var yValues = [];
-                    console.log(res.data['topSellingProduct']);
-                    res.data['topSellingProduct'].forEach(products => {
-                        xValues.push(products.product.name);
-                        yValues.push(products.total_qty);
-                    });
-                    var barColors = [
-                        "#a260ff ",
-                        "#28025c",
-                        "#008DDA",
-                        "#41C9E2",
-                        "#824D74",
-                        "#FF8E8F",
-                        "#FFC700",
-                        "#F6995C",
-                        "#FF204E",
-                        "#ea0606",
-                    ];
-
-                    new Chart("myChart", {
-                        type: "doughnut",
-                        data: {
-                            labels: xValues,
-                            datasets: [{
-                                backgroundColor: barColors,
-                                data: yValues
-                            }],
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-
-                            title: {
-                                display: true,
-                                text: "Top Selling Products",
-                                fontSize: 16,
-                                fontColor: "#111",
-                                position: 'bottom',
-
-                            },
-                            legend: {
-                                position: 'bottom',
-                            },
-                        }
-                    });
 
                 } else {
                     console.log(res);
@@ -280,6 +236,99 @@
         // pieChart()
 
         // function pieChart() {
+        function SellbyDay(res) {
+            month = [];
+            var totalSell = [];
+            res.data['sellByMonthThisYear'].forEach(data => {
+                month.push(data.month);
+                totalSell.push(data.total_collection);
+            });
+            // console.log(totalSell);
+            new Chart($("#chart_day_sell"), {
+                type: 'bar',
+                data: {
+                    labels: month,
+                    datasets: [{
+                        label: "Sell",
+                        data: totalSell,
+                        backgroundColor: '#6433c0',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: "This Year Monthly Sell",
+                        fontSize: 20,
+                        fontColor: "#111",
+                        position: 'top',
+
+                    },
+
+                }
+
+            })
+        }
+
+        function topSellProduct(res) {
+            var xValues = [];
+            var yValues = [];
+            res.data['topSellingProduct'].forEach(products => {
+                xValues.push(products.product.name);
+                yValues.push(products.total_qty);
+            });
+            var barColors = [
+                "#a260ff ",
+                "#28025c",
+                "#008DDA",
+                "#41C9E2",
+                "#824D74",
+                "#FF8E8F",
+                "#FFC700",
+                "#F6995C",
+                "#FF204E",
+                "#ea0606",
+            ];
+
+
+            new Chart($("#chart_top_sell"), {
+                type: "doughnut",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: barColors,
+                        data: yValues
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    title: {
+                        display: true,
+                        text: "Top Selling Products",
+                        fontSize: 20,
+                        fontColor: "#111",
+                        position: 'top',
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                }
+            });
+        }
 
 
     }

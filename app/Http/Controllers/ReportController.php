@@ -9,6 +9,7 @@ use App\Models\InvoiceProduct;
 use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 
@@ -94,6 +95,20 @@ class ReportController extends Controller
             )
                 ->get();
 
+            $getThisYear = Date::now()->year;
+            $sellByMonthThisYear = Invoice::where('user_id', '=', $user_id)
+                ->whereBetween('created_at', ["{$getThisYear}-01-01", "{$getThisYear}-12-31"])
+                ->select(
+                    DB::raw('SUM(payable) as total_collection'), 
+                    DB::raw('MONTH(created_at) as month_number'), 
+                    DB::raw('MONTHNAME(created_at) as month') 
+                )
+                ->groupBy('month_number') 
+                ->groupBy('month') 
+                ->orderBy('month_number', 'asc') 
+                ->get();
+
+
             $topSellingProduct = InvoiceProduct::with(['product:id,name'])->where('user_id', '=', $user_id)
                 ->select('product_id', DB::raw('SUM(qty) as total_qty'))
                 ->groupBy('product_id')
@@ -107,7 +122,8 @@ class ReportController extends Controller
                 'customer' => $customer,
                 'invoice' => $invoice,
                 'total' => $total,
-                'topSellingProduct' => $topSellingProduct
+                'topSellingProduct' => $topSellingProduct,
+                'sellByMonthThisYear' => $sellByMonthThisYear
             ];
             return response()->json([
                 'status' => 200,
