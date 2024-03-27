@@ -60,7 +60,7 @@
                         $('#tableList').append(row)
                     });
 
-                    //click event of edit and delete customer and set value 
+                    //click event of edit and delete customer and set value
                     $('.editBtn').on('click', function() {
                         let id = $(this).data('id');
                         $('#updateID').val(id);
@@ -77,7 +77,7 @@
                         order: [
                             [0, 'desc']
                         ],
-                        lengthMenu: [5, 10, 15, 20, 30]
+                        lengthMenu: [10, 20, 50, 100, 500, 1000]
                     });
                 };
             }
