@@ -195,10 +195,10 @@
                                         <td class="col-10">${item['name']}</td>
 
                                         <td>
-                                            <button onClick="addProductModel(this)" data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}" 
+                                            <button onClick="addProductModel(this)" data-id="${item['id']}" data-name="${item['name']}" data-price="${item['price']}"
                                             class="float-end btn m-0  bg-gradient-primary addProduct">Add</button>
-                                            
-                                            
+
+
                                             </td>
                                             </tr>`;
                             // data-bs-toggle="modal" data-bs-target="#create-modal"
@@ -251,11 +251,23 @@
             } else if (price <= 0) {
                 errorToast("Price Can't be 0")
             } else {
+                showLoader()
+                $.ajax({
+                    type: "post",
+                    url: "/ck-product-qty-by-id",
+                    data: {
+                        pId: id,
+                        quantity: quantity
+                    },
+                    success: function(response) {
+                        hideLoader()
+                        if (response.status == 'success') {
+                            console.log(response);
 
-                let total = price * quantity;
+                            let total = price * quantity;
 
-                let invoiceList = $('#invoiceList');
-                let row = `<tr data-id="${id}">
+                            let invoiceList = $('#invoiceList');
+                            let row = `<tr data-id="${id}">
                             <td class="col-1">${name}</td>
                             <td>${quantity}</td>
                             <td>${total}</td>
@@ -264,38 +276,51 @@
                             </td>
                         </tr>`;
 
-                //check duplicate
-                let exists = $('#invoiceList').find('tr[data-id="' + id + '"]').length > 0;
-                if (exists) {
-                    errorToast('This product Already Exists');
-                } else {
-                    $('#create-modal').modal('hide');
-                    let grandTotal = parseFloat($('#total').text());
-                    let vat = parseFloat($('#vat').text());
-                    let discount = parseFloat($('#discount').text());
+                            //check duplicate
+                            let exists = $('#invoiceList').find('tr[data-id="' + id + '"]').length > 0;
+                            if (exists) {
+                                errorToast('This product Already Exists');
+                            } else {
+                                $('#create-modal').modal('hide');
+                                let grandTotal = parseFloat($('#total').text());
+                                let vat = parseFloat($('#vat').text());
+                                let discount = parseFloat($('#discount').text());
 
-                    /*
-                         fristly calculate the total price of all products
-                         then calculate vat 
-                         then discount the percentage
-                         */
-                    grandTotal += total;
-                    $('#total').text(grandTotal);
+                                /*
+                                     fristly calculate the total price of all products
+                                     then calculate vat
+                                     then discount the percentage
+                                     */
+                                grandTotal += total;
+                                $('#total').text(grandTotal);
 
-                    let calculateVAtPercent = (5 / 100) * grandTotal; //5% vat
-                    $('#vat').text(calculateVAtPercent.toFixed(2));
+                                let calculateVAtPercent = (5 / 100) * grandTotal; //5% vat
+                                $('#vat').text(calculateVAtPercent.toFixed(2));
 
-                    let payableTotal = calculateVAtPercent + grandTotal;
-
-
-
-                    $('#payable').text((payableTotal).toFixed(2));
-
-                    invoiceList.append(row);
-                    successToast("Product Added")
+                                let payableTotal = calculateVAtPercent + grandTotal;
 
 
-                }
+
+                                $('#payable').text((payableTotal).toFixed(2));
+
+                                invoiceList.append(row);
+                                successToast("Product Added")
+
+
+
+                            }
+
+                        }else if (response.status == 'error') {
+                            errorToast(response.message);
+                        }
+
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        hideLoader();
+                        errorToast(textStatus, errorThrown);
+                    }
+
+                });
 
             }
             discount()
@@ -333,7 +358,7 @@
             let email = $(button).data('email');
             let mobile = $(button).data('mobile');
             let user_id = $(button).data('user_id');
-            // set data 
+            // set data
             let customerName = $('#CName').text(name);
             let customerEmail = $('#CEmail').text(email);
             let customerId = $('#CId').text(id);
@@ -347,7 +372,7 @@
             grandTotal -= total;
             $('#total').text(grandTotal);
 
-            //calculate all 
+            //calculate all
             let calculateVAtPercent = (5 / 100) * grandTotal; //5% vat
             $('#vat').text(calculateVAtPercent.toFixed(2));
 
@@ -412,14 +437,13 @@
                             products: productList
                         },
                         success: function(response) {
+                            hideLoader();
                             console.log(response)
                             if (response.status == '200') {
                                 successToast(response.message);
-                                hideLoader();
                                 window.location.href = '/invoicePage';
                             } else {
                                 errorToast(response.message);
-                                hideLoader();
                             }
                         }
                     })

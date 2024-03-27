@@ -245,4 +245,30 @@ class ProductController extends Controller
             'product' => $product
         ]);
     }
+    function ckProductQtyById(Request $request){
+
+        $userId = $request->header('id');
+        $productId = $request->input('pId');
+        $quantity = $request->input('quantity');
+        $product = Product::where('id', $productId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$product) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Product not found'
+            ]);
+        }
+        if ($product->unit < $quantity) {
+            $quantity = $product->unit;
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Only ' . $quantity . ' items are available'
+            ]);
+        }
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
 }

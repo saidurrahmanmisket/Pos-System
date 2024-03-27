@@ -67,6 +67,7 @@ Route::post('/product-update', [ProductController::class, 'productUpdate'])->mid
 Route::post('/product-delete', [ProductController::class, 'productDelete'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/product-list', [ProductController::class, 'productList'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/product-by-id', [ProductController::class, 'productById'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/ck-product-qty-by-id', [ProductController::class, 'ckProductQtyById'])->middleware([TokenVerificationMiddleware::class]);
 
 
 //invoice route

@@ -109,7 +109,7 @@
 
                     $("#details-modal").modal("show");
                 } else {
-                    //     // hideLoader();
+                    // hideLoader();
                     errorToast(response.message);
                 }
             }

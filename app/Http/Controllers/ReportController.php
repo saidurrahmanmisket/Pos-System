@@ -88,10 +88,10 @@ class ReportController extends Controller
             $customer = Customer::where('user_id', '=', $user_id)->count();
             $invoice = Invoice::where('user_id', '=', $user_id)->count();
             $total = Invoice::where('user_id', '=', $user_id)->select(
-                DB::raw('SUM(total) as total_sell'),
-                DB::raw('SUM(discount) as total_discount'),
-                DB::raw('SUM(vat) as total_vat'),
-                DB::raw('SUM(payable) as total_payable')
+                DB::raw('SUM(CONVERT(total, DECIMAL(10,2))) as total_sell'),
+                DB::raw('SUM(CONVERT(discount, DECIMAL(10,2))) as total_discount'),
+                DB::raw('SUM(CONVERT(vat, DECIMAL(10,2))) as total_vat'),
+                DB::raw('SUM(CONVERT(payable, DECIMAL(10,2))) as total_payable')
             )
                 ->get();
 

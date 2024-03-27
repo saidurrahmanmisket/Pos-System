@@ -209,10 +209,10 @@
                     $('#invoice').text(res.data['invoice']);
                     $('#category').text(res.data['category']);
                     $('#customer').text(res.data['customer']);
-                    $('#total').text(res.data['total'][0]['total_sell'].toFixed(2));
-                    $('#vat').text(res.data['total'][0]['total_vat'].toFixed(2));
-                    $('#payable').text(res.data['total'][0]['total_payable'].toFixed(2));
-                    $('#discount').text(res.data['total'][0]['total_discount'].toFixed(2));
+                    $('#total').text(res.data['total'][0]['total_sell']);
+                    $('#vat').text(res.data['total'][0]['total_vat']);
+                    $('#payable').text(res.data['total'][0]['total_payable']);
+                    $('#discount').text(res.data['total'][0]['total_discount']);
 
 
                     SellbyDay(res); //chart_day_sell

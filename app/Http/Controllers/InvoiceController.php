@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceProduct;
+use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -58,19 +59,28 @@ class InvoiceController extends Controller
             $invoiceId = $invoice->id;
             $products = $request->products;
 
-
             $invoiceProducts = [];
-
+            
             foreach ($products as $product) {
-                $invoiceProducts[] = [
-                    'invoice_id' => $invoiceId,
-                    'product_id' => $product['product_id'],
-                    'user_id' => $userID,
-                    'qty' => $product['qty'],
-                    'sale_price' => $product['sale_price']
-                ];
+                $qty = (int)$product['qty']; // Convert quantity to integer
+                if ($qty > 0) { // Check if quantity is a positive integer
+                    $invoiceProducts[] = [
+                        'invoice_id' => $invoiceId,
+                        'product_id' => $product['product_id'],
+                        'user_id' => $userID,
+                        'qty' => $qty, // Use converted quantity
+                        'sale_price' => $product['sale_price']
+                    ];
+                }
             }
+
             InvoiceProduct::insert($invoiceProducts);
+
+            // Decrement product unit
+            foreach ($invoiceProducts as $product) {
+                Product::where('id', $product['product_id'])
+                    ->decrement('unit', $product['qty']);
+            }
 
 
             DB::commit();
@@ -122,7 +132,7 @@ class InvoiceController extends Controller
             $invoiceId = $request->invoice_id;
 
             $customer = Customer::where('user_id', $userID)
-            ->select('id', 'name', 'email', 'created_at')
+                ->select('id', 'name', 'email', 'created_at')
                 ->where('id', $customerId)
                 ->first();
 
@@ -133,7 +143,7 @@ class InvoiceController extends Controller
             $invoiceProducts = InvoiceProduct::with(['product:id,name'])
                 ->where('user_id', $userID)
                 ->where('invoice_id', $invoiceId)
-                ->select('id', 'product_id','sale_price', 'qty',)
+                ->select('id', 'product_id', 'sale_price', 'qty',)
                 ->get();
 
 
