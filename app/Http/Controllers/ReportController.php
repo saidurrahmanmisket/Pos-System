@@ -99,13 +99,13 @@ class ReportController extends Controller
             $sellByMonthThisYear = Invoice::where('user_id', '=', $user_id)
                 ->whereBetween('created_at', ["{$getThisYear}-01-01", "{$getThisYear}-12-31"])
                 ->select(
-                    DB::raw('SUM(payable) as total_collection'), 
-                    DB::raw('MONTH(created_at) as month_number'), 
-                    DB::raw('MONTHNAME(created_at) as month') 
+                    DB::raw('SUM(CONVERT(payable, DECIMAL(10,2))) as total_collection'),
+                    DB::raw('MONTH(created_at) as month_number'),
+                    DB::raw('MONTHNAME(created_at) as month')
                 )
-                ->groupBy('month_number') 
-                ->groupBy('month') 
-                ->orderBy('month_number', 'asc') 
+                ->groupBy('month_number')
+                ->groupBy('month')
+                ->orderBy('month_number', 'asc')
                 ->get();
 
 
