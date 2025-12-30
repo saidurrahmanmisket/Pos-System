@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Invoice;
+use App\Models\InvoiceProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -54,19 +57,44 @@ class CustomerController extends Controller
 
     function customerDelete(Request $request)
     {
-
         $customerId = $request->input('customer_id');
         $userId = $request->header('id');
-        $delete = Customer::where('user_id', $userId)->where('id', $customerId)->delete();
-        if ($delete) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Customer Deleted Successfully'
-            ]);
-        } else {
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Get all invoice IDs for this customer
+            $invoiceIds = Invoice::where('user_id', $userId)
+                ->where('customer_id', $customerId)
+                ->pluck('id');
+
+            // 2. Delete invoice products associated with these invoices
+            InvoiceProduct::whereIn('invoice_id', $invoiceIds)->delete();
+
+            // 3. Delete the invoices
+            Invoice::whereIn('id', $invoiceIds)->delete();
+
+            // 4. Finally, delete the customer
+            $delete = Customer::where('user_id', $userId)->where('id', $customerId)->delete();
+
+            DB::commit();
+
+            if ($delete) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Customer Deleted Successfully',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Customer Not Found'
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'status' => 'error',
-                'message' => 'Customer Not Deleted'
+                'message' => 'Failed to delete customer: ' . $e->getMessage()
             ]);
         }
     }

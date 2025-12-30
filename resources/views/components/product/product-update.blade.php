@@ -1,4 +1,5 @@
-<div class="modal animated zoomIn" id="update-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal animated zoomIn" id="update-modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -60,10 +61,10 @@
         $.ajax({
             type: "get",
             url: "/category-list",
-            success: function(response) {
+            success: function (response) {
                 if (response.status == 'success') {
                     hideLoader();
-                    response.data.forEach(function(item, i) {
+                    response.data.forEach(function (item, i) {
                         let option = `<option value="${item['id']}">${item['name']}</option>`;
                         $('#productCategoryUpdate').append(option);
                         if (item['id'] == id) {
@@ -75,7 +76,7 @@
                     errorToast(response.message);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 errorToast(textStatus, errorThrown);
             }
         });
@@ -91,11 +92,13 @@
             data: {
                 product_id: id
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.status === 200) {
                     console.log(response);
                     setCategory(response.product.category_id); //get category option data
-                    let imgPath = 'images/product/' + response.product.img_url;
+                    let imgPath = response.product.img_url.startsWith('http')
+                        ? response.product.img_url
+                        : 'images/product/' + response.product.img_url;
                     $('#oldImg').attr('src', imgPath);
                     $('#productNameUpdate').val(response.product.name);
                     $('#productPriceUpdate').val(response.product.price);
@@ -107,7 +110,7 @@
                     errorToast(response.message);
                 }
             },
-            error: function(xhr, textStatus, errorThrown) {
+            error: function (xhr, textStatus, errorThrown) {
                 hideLoader();
                 errorToast(textStatus, errorThrown);
             }
@@ -152,7 +155,7 @@
                 cache: false,
 
                 data: formData,
-                success: function(response) {
+                success: function (response) {
                     hideLoader();
                     if (response.status === 200) {
                         $('#update-modal').modal('hide');
@@ -162,7 +165,7 @@
                         errorToast(response.message);
                     }
                 },
-                error: function(xhr, textStatus, errorThrown) {
+                error: function (xhr, textStatus, errorThrown) {
                     hideLoader();
                     errorToast(textStatus, errorThrown);
                 }

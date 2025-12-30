@@ -137,6 +137,16 @@
         }
 
 
+        // Highlight current menu item
+        const currentPath = window.location.pathname;
+        const sidebarItems = document.querySelectorAll('.side-bar-item');
+
+        sidebarItems.forEach(item => {
+            if (item.getAttribute('href').includes(currentPath)) {
+                item.classList.add('active');
+            }
+        });
+
         userName()
 
         function userName() {
@@ -144,7 +154,7 @@
             $.ajax({
                 type: "get",
                 url: "/user-name",
-                success: function(response) {
+                success: function (response) {
                     if (response.status == 'success') {
                         hideLoader();
                         $('#userName').text(response.data.firstName + ' ' + response.data.lastName);
@@ -155,7 +165,7 @@
                     }
 
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     errorToast(textStatus, errorThrown);
                 }
 

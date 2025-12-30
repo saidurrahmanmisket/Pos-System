@@ -60,9 +60,9 @@ class InvoiceController extends Controller
             $products = $request->products;
 
             $invoiceProducts = [];
-            
+
             foreach ($products as $product) {
-                $qty = (int)$product['qty']; // Convert quantity to integer
+                $qty = (int) $product['qty']; // Convert quantity to integer
                 if ($qty > 0) { // Check if quantity is a positive integer
                     $invoiceProducts[] = [
                         'invoice_id' => $invoiceId,
@@ -76,11 +76,7 @@ class InvoiceController extends Controller
 
             InvoiceProduct::insert($invoiceProducts);
 
-            // Decrement product unit
-            foreach ($invoiceProducts as $product) {
-                Product::where('id', $product['product_id'])
-                    ->decrement('unit', $product['qty']);
-            }
+
 
 
             DB::commit();
@@ -143,7 +139,7 @@ class InvoiceController extends Controller
             $invoiceProducts = InvoiceProduct::with(['product:id,name'])
                 ->where('user_id', $userID)
                 ->where('invoice_id', $invoiceId)
-                ->select('id', 'product_id', 'sale_price', 'qty',)
+                ->select('id', 'product_id', 'sale_price', 'qty', )
                 ->get();
 
 
@@ -199,6 +195,7 @@ class InvoiceController extends Controller
                     'message' => 'Invoice not found'
                 ]);
             }
+            InvoiceProduct::where('invoice_id', $id)->delete();
             $invoice->delete();
             return response()->json([
                 'status' => 200,
